@@ -1,39 +1,34 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Draggable Builder
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+Add draggable item support to dynamically built scrollable containers like GridView and ListView in
+Flutter.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
-
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+[![Pub](https://img.shields.io/pub/v/draggable_builder.svg)](https://pub.dartlang.org/packages/draggable_builder)
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+In your library add the following import:
 
 ```dart
-const like = 'sample';
+import 'package:draggable_builder/draggable_builder.dart';
 ```
 
-## Additional information
+Add a `DraggableController` property to the `State` of your `StatefulWidget` and initialize it with
+an `onDragCompletion` callback, which will be triggered when a drag action is completed. Remember to
+properly dispose of the `DraggableController` to prevent memory leaks.
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+To integrate the `DraggableBuilder` with your scrollable widget, such as `GridView.builder` or
+`ListView.builder`, follow these steps:
+
+1. Wrap your scrollable widget with a `DraggableBuilder`, passing the previous controller through
+   the `controller` property.
+2. Provide the `itemBuilder` property to define how the items in the scrollable are built, and
+   optionally specify the `itemCount` property to represent the total number of items.
+3. Within the `builder` property, create your scrollable widget and delegate the `itemBuilder` and
+   `itemCount` properties to those passed as parameters.
+
+Here’s a simple example:
+
+```dart
+```
+
