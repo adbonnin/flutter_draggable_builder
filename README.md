@@ -10,7 +10,7 @@ Flutter.
 In your library add the following import:
 
 ```dart
-import 'package:draggable_builder/draggable_builder.dart';
+import 'package:draggable_builder/simple_draggable_builder.dart';
 ```
 
 Add a `DraggableController` property to the `State` of your `StatefulWidget` and initialize it with
@@ -30,5 +30,59 @@ To integrate the `DraggableBuilder` with your scrollable widget, such as `GridVi
 Here’s a simple example:
 
 ```dart
+import 'package:draggable_builder/simple_draggable_builder.dart';
+import 'package:flutter/material.dart';
+
+class _MyHomePageState extends State<MyHomePage> {
+   var _colors = [Colors.red, Colors.yellow, Colors.green, Colors.blue];
+
+   late final DraggableController _controller;
+
+   @override
+   void initState() {
+      super.initState();
+
+      _controller = DraggableController(
+         onDragCompletion: _onDragCompletion,
+      );
+   }
+
+   @override
+   void dispose() {
+      _controller.dispose();
+      super.dispose();
+   }
+
+   @override
+   Widget build(BuildContext context) {
+      return Scaffold(
+         body: DraggableBuilder(
+            controller: _controller,
+            itemBuilder: (_, index) => ColoredBox(color: _colors[index]),
+            itemCount: _colors.length,
+            builder: (_, itemBuilder, itemCount) => GridView.builder(
+               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                  mainAxisSpacing: 8.0,
+                  crossAxisSpacing: 8.0,
+               ),
+               itemBuilder: itemBuilder,
+               itemCount: itemCount,
+            ),
+         ),
+      );
+   }
+
+   void _onDragCompletion(Object dragId, int dragIndex, Object targetId, int targetIndex) {
+      final newColors = [..._colors] //
+         ..removeAt(dragIndex)
+         ..insert(targetIndex, _colors[dragIndex]);
+
+      setState(() {
+         _colors = newColors;
+      });
+   }
+}
+
 ```
 

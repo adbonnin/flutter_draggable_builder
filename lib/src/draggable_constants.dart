@@ -1,0 +1,4 @@
+enum DraggableId {
+  mustBeUnique,
+  notDraggable,
+}
