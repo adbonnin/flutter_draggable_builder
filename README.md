@@ -3,6 +3,8 @@
 Add draggable item support to dynamically built scrollable containers like GridView and ListView in
 Flutter.
 
+You can check out a live demo using Widgetbook [here](https://adbonnin.github.io/flutter_draggable_builder).
+
 [![Pub](https://img.shields.io/pub/v/draggable_builder.svg)](https://pub.dartlang.org/packages/draggable_builder)
 
 ## Getting started
