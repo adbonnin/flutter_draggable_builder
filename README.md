@@ -1,7 +1,7 @@
 # Draggable Builder
 
 Add draggable item support to dynamically built scrollable containers like GridView and ListView in
-Flutter.
+Flutter. Supports multiple draggable containers with item exchange between them.
 
 You can check out a live demo using Widgetbook [here](https://adbonnin.github.io/flutter_draggable_builder).
 

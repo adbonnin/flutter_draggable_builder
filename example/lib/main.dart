@@ -67,7 +67,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _onDragCompletion(Object dragId, int dragIndex, Object targetId, int targetIndex) {
+  void _onDragCompletion(
+      Object dragId, int dragIndex, Object targetId, int targetIndex) {
     final newColors = [..._colors] //
       ..removeAt(dragIndex)
       ..insert(targetIndex, _colors[dragIndex]);

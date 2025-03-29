@@ -179,7 +179,7 @@ class _DefaultDraggableControllerState extends State<DefaultDraggableController>
   Widget build(BuildContext context) {
     return _DraggableControllerScope(
       controller: widget.controller,
-      child: widget.child ?? SizedBox(),
+      child: widget.child ?? const SizedBox(),
     );
   }
 }
