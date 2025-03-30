@@ -1,7 +1,7 @@
-import 'package:flutter/widgets.dart';
 import 'package:draggable_builder/src/draggable_constants.dart';
 import 'package:draggable_builder/src/draggable_controller.dart';
 import 'package:draggable_builder/src/draggable_data.dart';
+import 'package:flutter/widgets.dart';
 
 typedef ScrollableBuilder = Widget Function(
   BuildContext context,
@@ -118,7 +118,7 @@ class _DraggableBuilderState extends State<DraggableBuilder> {
     }
 
     if (_shouldDisplayEmptyItem) {
-      return widget.emptyItemBuilder!(context);
+      return widget.emptyItemBuilder?.call(context) ?? const SizedBox();
     }
 
     final IndexedWidgetBuilder itemBuilder;
@@ -190,7 +190,7 @@ class _DraggableBuilderState extends State<DraggableBuilder> {
   }
 
   bool get _shouldDisplayEmptyItem {
-    return widget.itemCount != null && widget.itemCount! <= 0 && widget.emptyItemBuilder != null;
+    return widget.itemCount != null && widget.itemCount! <= 0;
   }
 
   int? get _itemCount {

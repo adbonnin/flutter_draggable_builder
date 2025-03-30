@@ -1,7 +1,8 @@
 import 'package:draggable_builder/draggable_builder.dart';
 import 'package:flutter/material.dart';
+import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
-import 'package:widgetbook_workspace/widgets/empty_box.dart';
+import 'package:widgetbook_workspace/utils/widget_book.dart';
 import 'package:widgetbook_workspace/widgets/grid_view.dart';
 import 'package:widgetbook_workspace/widgets/info_label.dart';
 
@@ -46,6 +47,8 @@ class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuild
 
   @override
   Widget build(BuildContext context) {
+    final emptyBuilder = context.knobs.emptyItemBuilder();
+
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(8),
@@ -60,7 +63,7 @@ class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuild
                 controller: _controller,
                 itemBuilder: (_, index) => ColoredBox(color: _topColors[index]),
                 itemCount: _topColors.length,
-                emptyItemBuilder: (_) => EmptyBox(),
+                emptyItemBuilder: emptyBuilder,
                 builder: (_, itemBuilder, itemCount) => MyGridView(
                   itemBuilder: itemBuilder,
                   itemCount: itemCount,
@@ -74,7 +77,7 @@ class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuild
                 controller: _controller,
                 itemBuilder: (_, index) => ColoredBox(color: _bottomColors[index]),
                 itemCount: _bottomColors.length,
-                emptyItemBuilder: (_) => EmptyBox(),
+                emptyItemBuilder: emptyBuilder,
                 builder: (_, itemBuilder, itemCount) => MyGridView(
                   itemBuilder: itemBuilder,
                   itemCount: itemCount,
