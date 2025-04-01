@@ -1,6 +1,9 @@
 import 'package:draggable_builder/draggable_builder.dart';
 import 'package:flutter/material.dart';
+import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
+import 'package:widgetbook_workspace/utils/widget_book.dart';
+import 'package:widgetbook_workspace/widgets/grid_item.dart';
 import 'package:widgetbook_workspace/widgets/grid_view.dart';
 
 @widgetbook.UseCase(
@@ -40,17 +43,19 @@ class _SimpleDraggableBuilderUseCaseState extends State<SimpleDraggableBuilderUs
 
   @override
   Widget build(BuildContext context) {
+    final feedbackBuilder = context.knobs.feedbackBuilder();
+    final placeholderBuilder = context.knobs.placeholderBuilder();
+
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(8),
-        child: DraggableBuilder(
+        child: DraggableGridView(
+          id: 0,
+          values: _colors,
           controller: _controller,
-          itemBuilder: (_, index) => ColoredBox(color: _colors[index]),
-          itemCount: _colors.length,
-          builder: (_, itemBuilder, itemCount) => MyGridView(
-            itemBuilder: itemBuilder,
-            itemCount: itemCount,
-          ),
+          itemBuilder: (_, color) => GridItem(color: color),
+          feedbackBuilder: feedbackBuilder,
+          placeholderBuilder: placeholderBuilder,
         ),
       ),
     );

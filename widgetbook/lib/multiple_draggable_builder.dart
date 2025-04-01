@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 import 'package:widgetbook_workspace/utils/widget_book.dart';
+import 'package:widgetbook_workspace/widgets/grid_item.dart';
 import 'package:widgetbook_workspace/widgets/grid_view.dart';
 import 'package:widgetbook_workspace/widgets/info_label.dart';
 
@@ -47,7 +48,10 @@ class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuild
 
   @override
   Widget build(BuildContext context) {
-    final emptyBuilder = context.knobs.emptyItemBuilder();
+    final emptyItemBuilder = context.knobs.emptyItemBuilder();
+    final itemWhenDraggingBuilder = context.knobs.itemWhenDraggingBuilder();
+    final feedbackBuilder = context.knobs.feedbackBuilder();
+    final placeholderBuilder = context.knobs.placeholderBuilder();
 
     return SingleChildScrollView(
       child: Padding(
@@ -58,30 +62,28 @@ class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuild
           children: [
             InfoLabel(
               labelText: "Top Draggable GridView",
-              child: DraggableBuilder(
+              child: DraggableGridView(
                 id: topId,
+                values: _topColors,
                 controller: _controller,
-                itemBuilder: (_, index) => ColoredBox(color: _topColors[index]),
-                itemCount: _topColors.length,
-                emptyItemBuilder: emptyBuilder,
-                builder: (_, itemBuilder, itemCount) => MyGridView(
-                  itemBuilder: itemBuilder,
-                  itemCount: itemCount,
-                ),
+                itemBuilder: (_, color) => GridItem(color: color),
+                itemWhenDraggingBuilder: itemWhenDraggingBuilder,
+                feedbackBuilder: feedbackBuilder,
+                placeholderBuilder: placeholderBuilder,
+                emptyItemBuilder: emptyItemBuilder,
               ),
             ),
             InfoLabel(
               labelText: "Bottom Draggable GridView",
-              child: DraggableBuilder(
+              child: DraggableGridView(
                 id: bottomId,
+                values: _bottomColors,
                 controller: _controller,
-                itemBuilder: (_, index) => ColoredBox(color: _bottomColors[index]),
-                itemCount: _bottomColors.length,
-                emptyItemBuilder: emptyBuilder,
-                builder: (_, itemBuilder, itemCount) => MyGridView(
-                  itemBuilder: itemBuilder,
-                  itemCount: itemCount,
-                ),
+                itemBuilder: (_, color) => GridItem(color: color),
+                itemWhenDraggingBuilder: itemWhenDraggingBuilder,
+                feedbackBuilder: feedbackBuilder,
+                placeholderBuilder: placeholderBuilder,
+                emptyItemBuilder: emptyItemBuilder,
               ),
             ),
           ],
