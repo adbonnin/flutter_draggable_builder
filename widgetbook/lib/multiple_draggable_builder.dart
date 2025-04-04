@@ -25,8 +25,8 @@ class MultipleDraggableBuilderUseCase extends StatefulWidget {
 class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuilderUseCase> {
   late final DraggableController _controller;
 
-  static const topId = 0;
-  static const bottomId = 1;
+  static const topIdentifier = 0;
+  static const bottomIdentifier = 1;
 
   var _topColors = [Colors.red, Colors.green];
   var _bottomColors = <Color>[Colors.blue, Colors.yellow];
@@ -63,7 +63,7 @@ class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuild
             InfoLabel(
               labelText: "Top Draggable GridView",
               child: DraggableGridView(
-                id: topId,
+                identifier: topIdentifier,
                 values: _topColors,
                 controller: _controller,
                 itemBuilder: (_, color) => GridItem(color: color),
@@ -76,7 +76,7 @@ class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuild
             InfoLabel(
               labelText: "Bottom Draggable GridView",
               child: DraggableGridView(
-                id: bottomId,
+                identifier: bottomIdentifier,
                 values: _bottomColors,
                 controller: _controller,
                 itemBuilder: (_, color) => GridItem(color: color),
@@ -96,8 +96,8 @@ class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuild
     var newTopColors = [..._topColors];
     var newBottomColors = [..._bottomColors];
 
-    final dragColors = dragId == topId ? newTopColors : newBottomColors;
-    final targetColors = targetId == topId ? newTopColors : newBottomColors;
+    final dragColors = dragId == topIdentifier ? newTopColors : newBottomColors;
+    final targetColors = targetId == topIdentifier ? newTopColors : newBottomColors;
 
     final color = dragColors.removeAt(dragIndex);
     targetColors.insert(targetIndex, color);

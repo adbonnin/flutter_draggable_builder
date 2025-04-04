@@ -1,4 +1,4 @@
-enum DraggableId {
+enum DraggableSpecialIdentifier {
   mustBeUnique,
   notDraggable,
 }

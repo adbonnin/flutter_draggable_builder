@@ -50,7 +50,7 @@ class _SimpleDraggableBuilderUseCaseState extends State<SimpleDraggableBuilderUs
       child: Padding(
         padding: EdgeInsets.all(8),
         child: DraggableGridView(
-          id: 0,
+          identifier: 0,
           values: _colors,
           controller: _controller,
           itemBuilder: (_, color) => GridItem(color: color),

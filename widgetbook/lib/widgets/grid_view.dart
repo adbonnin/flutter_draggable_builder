@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 class DraggableGridView<T> extends StatelessWidget {
   const DraggableGridView({
     super.key,
-    required this.id,
+    required this.identifier,
     required this.values,
     this.controller,
     required this.itemBuilder,
@@ -14,7 +14,7 @@ class DraggableGridView<T> extends StatelessWidget {
     this.emptyItemBuilder,
   });
 
-  final int id;
+  final int identifier;
   final List<T> values;
   final DraggableController? controller;
   final Widget Function(BuildContext context, T value) itemBuilder;
@@ -26,7 +26,7 @@ class DraggableGridView<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DraggableBuilder(
-      id: id,
+      identifier: identifier,
       controller: controller,
       itemBuilder: (c, i) => itemBuilder(c, values[i]),
       itemWhenDraggingBuilder: itemWhenDraggingBuilder == null ? null : (c, i) => itemWhenDraggingBuilder!(c, values[i]),

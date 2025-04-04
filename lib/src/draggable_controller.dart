@@ -25,7 +25,7 @@ class DraggableController with ChangeNotifier {
     }
 
     final effectiveId = _data?.computeEffectiveId(id, index) ?? id;
-    return DraggableItemData(dragId: effectiveId, dragIndex: effectiveIndex);
+    return DraggableItemData(dragIdentifier: effectiveId, dragIndex: effectiveIndex);
   }
 
   @visibleForTesting
@@ -46,15 +46,15 @@ class DraggableController with ChangeNotifier {
     return index;
   }
 
-  void onDragTargetMove(DraggableDragData drag, Object targetId, int? targetIndex, int? targetCount) {
+  void onDragTargetMove(DraggableDragData drag, Object targetIdentifier, int? targetIndex, int? targetCount) {
     if (targetIndex == null) {
-      if (drag.dragId == targetId) {
+      if (drag.dragIdentifier == targetIdentifier) {
         return;
       }
 
-      final isSameDrag = _data?.dragId == drag.dragId && //
+      final isSameDrag = _data?.dragIdentifier == drag.dragIdentifier && //
           _data?.dragIndex == drag.dragIndex &&
-          _data?.targetId == targetId;
+          _data?.targetIdentifier == targetIdentifier;
 
       if (isSameDrag) {
         return;
@@ -64,10 +64,10 @@ class DraggableController with ChangeNotifier {
     }
 
     final data = DraggableDraggedData(
-      dragId: drag.dragId,
+      dragIdentifier: drag.dragIdentifier,
       dragIndex: drag.dragIndex,
       placeholderBuilder: drag.placeholderBuilder,
-      targetId: targetId,
+      targetIdentifier: targetIdentifier,
       targetIndex: targetIndex,
     );
 
@@ -95,12 +95,12 @@ extension _DraggableDraggedDataExtension on DraggableDraggedData {
       return itemCount;
     }
 
-    if (dragId != targetId) {
+    if (dragIdentifier != targetIdentifier) {
       // if (id == dragId) {
       //   return itemCount - 1;
       // }
 
-      if (id == targetId) {
+      if (id == targetIdentifier) {
         return itemCount + 1;
       }
     }
@@ -109,12 +109,12 @@ extension _DraggableDraggedDataExtension on DraggableDraggedData {
   }
 
   int computeEffectiveIndex(Object id, int index) {
-    if (dragId != targetId) {
+    if (dragIdentifier != targetIdentifier) {
       // if (id == dragId) {
       //   return index >= dragIndex ? index + 1 : index;
       // }
 
-      if (id == targetId) {
+      if (id == targetIdentifier) {
         if (index == targetIndex) {
           return -1;
         }
@@ -123,7 +123,7 @@ extension _DraggableDraggedDataExtension on DraggableDraggedData {
       }
     } //
     else {
-      if (id == dragId) {
+      if (id == dragIdentifier) {
         if (index == targetIndex && (targetIndex != dragIndex)) {
           return -1;
         }
@@ -136,13 +136,13 @@ extension _DraggableDraggedDataExtension on DraggableDraggedData {
   }
 
   Object computeEffectiveId(Object id, int index) {
-    return id == dragId && index == dragIndex ? targetId : DraggableId.notDraggable;
+    return id == dragIdentifier && index == dragIndex ? targetIdentifier : DraggableSpecialIdentifier.notDraggable;
   }
 }
 
 extension _DragCompletionCallbackExtension on DragCompletionCallback {
   void callWithData(DraggableDraggedData data) {
-    return call(data.dragId, data.dragIndex, data.targetId, data.targetIndex);
+    return call(data.dragIdentifier, data.dragIndex, data.targetIdentifier, data.targetIndex);
   }
 }
 

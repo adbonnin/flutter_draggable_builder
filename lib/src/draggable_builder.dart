@@ -19,7 +19,7 @@ typedef PlaceholderWidgetBuilder = Widget Function(
 class DraggableBuilder extends StatefulWidget {
   const DraggableBuilder({
     super.key,
-    this.id = DraggableId.mustBeUnique,
+    this.identifier = DraggableSpecialIdentifier.mustBeUnique,
     this.isLongPress = false,
     this.controller,
     this.axis,
@@ -36,7 +36,7 @@ class DraggableBuilder extends StatefulWidget {
     required this.builder,
   });
 
-  final Object id;
+  final Object identifier;
   final bool isLongPress;
   final DraggableController? controller;
   final Axis? axis;
@@ -111,7 +111,7 @@ class _DraggableBuilderState extends State<DraggableBuilder> {
   }
 
   Widget? _buildItem(BuildContext context, int index) {
-    final item = _controller!.computeItem(widget.id, index);
+    final item = _controller!.computeItem(widget.identifier, index);
 
     if (item is DraggableDraggedData) {
       return item.buildPlaceholder(context);
@@ -123,10 +123,10 @@ class _DraggableBuilderState extends State<DraggableBuilder> {
 
     final IndexedWidgetBuilder itemBuilder;
 
-    if (item.dragId == widget.id) {
+    if (item.dragIdentifier == widget.identifier) {
       itemBuilder = widget.itemBuilder;
     } //
-    else if (item.dragId == DraggableId.notDraggable) {
+    else if (item.dragIdentifier == DraggableSpecialIdentifier.notDraggable) {
       itemBuilder = widget.itemBuilder;
     } //
     else {
@@ -139,9 +139,9 @@ class _DraggableBuilderState extends State<DraggableBuilder> {
         builder: (context, constraints) {
           var effectiveChild = itemBuilder(context, item.dragIndex);
 
-          if (item.dragId != DraggableId.notDraggable) {
+          if (item.dragIdentifier != DraggableSpecialIdentifier.notDraggable) {
             final data = DraggableDragData(
-              dragId: widget.id,
+              dragIdentifier: widget.identifier,
               dragIndex: item.dragIndex,
               placeholderBuilder: widget.placeholderBuilder ?? (c, i, ___, ____) => widget.itemBuilder(c, i),
             );
@@ -198,11 +198,11 @@ class _DraggableBuilderState extends State<DraggableBuilder> {
       return 1;
     }
 
-    return _controller!.computeItemCount(widget.id, widget.itemCount);
+    return _controller!.computeItemCount(widget.identifier, widget.itemCount);
   }
 
   void _onDragTargetMove(DragTargetDetails<DraggableDragData> details, int? targetIndex) {
-    _controller!.onDragTargetMove(details.data, widget.id, targetIndex, widget.itemCount);
+    _controller!.onDragTargetMove(details.data, widget.identifier, targetIndex, widget.itemCount);
   }
 
   void _onDragEnd(DraggableDetails details) {

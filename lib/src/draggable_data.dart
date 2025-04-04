@@ -3,11 +3,11 @@ import 'package:draggable_builder/src/draggable_builder.dart';
 
 class DraggableItemData {
   const DraggableItemData({
-    required this.dragId,
+    required this.dragIdentifier,
     required this.dragIndex,
   });
 
-  final Object dragId;
+  final Object dragIdentifier;
   final int dragIndex;
 
   @override
@@ -18,20 +18,20 @@ class DraggableItemData {
 
     return other is DraggableItemData && //
         runtimeType == other.runtimeType &&
-        dragId == other.dragId &&
+        dragIdentifier == other.dragIdentifier &&
         dragIndex == other.dragIndex;
   }
 
   @override
   int get hashCode {
-    return dragId.hashCode ^ //
+    return dragIdentifier.hashCode ^ //
         dragIndex.hashCode;
   }
 }
 
 class DraggableDragData extends DraggableItemData {
   const DraggableDragData({
-    required super.dragId,
+    required super.dragIdentifier,
     required super.dragIndex,
     required this.placeholderBuilder,
   });
@@ -46,14 +46,14 @@ class DraggableDragData extends DraggableItemData {
 
     return other is DraggableDragData && //
         runtimeType == other.runtimeType &&
-        dragId == other.dragId &&
+        dragIdentifier == other.dragIdentifier &&
         dragIndex == other.dragIndex &&
         placeholderBuilder == other.placeholderBuilder;
   }
 
   @override
   int get hashCode {
-    return dragId.hashCode ^ //
+    return dragIdentifier.hashCode ^ //
         dragIndex.hashCode ^
         placeholderBuilder.hashCode;
   }
@@ -61,18 +61,18 @@ class DraggableDragData extends DraggableItemData {
 
 class DraggableDraggedData extends DraggableDragData {
   const DraggableDraggedData({
-    required super.dragId,
+    required super.dragIdentifier,
     required super.dragIndex,
     required super.placeholderBuilder,
-    required this.targetId,
+    required this.targetIdentifier,
     required this.targetIndex,
   });
 
-  final Object targetId;
+  final Object targetIdentifier;
   final int targetIndex;
 
   Widget buildPlaceholder(BuildContext context) {
-    return placeholderBuilder.call(context, dragIndex, targetId, targetIndex);
+    return placeholderBuilder.call(context, dragIndex, targetIdentifier, targetIndex);
   }
 
   @override
@@ -83,19 +83,19 @@ class DraggableDraggedData extends DraggableDragData {
 
     return other is DraggableDraggedData &&
         runtimeType == other.runtimeType &&
-        dragId == other.dragId &&
+        dragIdentifier == other.dragIdentifier &&
         dragIndex == other.dragIndex &&
         placeholderBuilder == other.placeholderBuilder &&
-        targetId == other.targetId &&
+        targetIdentifier == other.targetIdentifier &&
         targetIndex == other.targetIndex;
   }
 
   @override
   int get hashCode {
-    return dragId.hashCode ^
+    return dragIdentifier.hashCode ^
         dragIndex.hashCode ^
         placeholderBuilder.hashCode ^
-        targetId.hashCode ^
+        targetIdentifier.hashCode ^
         targetIndex.hashCode;
   }
 }
