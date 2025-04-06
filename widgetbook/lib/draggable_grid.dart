@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 import 'package:widgetbook_workspace/utils/widget_book.dart';
-import 'package:widgetbook_workspace/widgets/grid_item.dart';
+import 'package:widgetbook_workspace/widgets/item_box.dart';
 import 'package:widgetbook_workspace/widgets/grid_view.dart';
 
 @widgetbook.UseCase(
-  name: 'Simple',
+  name: 'Draggable Grid',
   type: DraggableBuilder,
 )
 Widget buildSimpleDraggableBuilderUseCase(BuildContext context) {
@@ -53,7 +53,7 @@ class _SimpleDraggableBuilderUseCaseState extends State<SimpleDraggableBuilderUs
           identifier: 0,
           values: _colors,
           controller: _controller,
-          itemBuilder: (_, color) => GridItem(color: color),
+          itemBuilder: (_, color) => ItemBox(color: color),
           feedbackBuilder: feedbackBuilder,
           placeholderBuilder: placeholderBuilder,
         ),

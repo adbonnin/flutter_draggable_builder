@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class GridItem extends StatelessWidget {
-  const GridItem({
+class ItemBox extends StatelessWidget {
+  const ItemBox({
     super.key,
     required this.color,
     this.text,
@@ -12,7 +12,9 @@ class GridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
+    return Container(
+      width: 100,
+      height: 100,
       color: color,
       child: FittedBox(
         child: Padding(

@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 import 'package:widgetbook_workspace/utils/widget_book.dart';
-import 'package:widgetbook_workspace/widgets/grid_item.dart';
+import 'package:widgetbook_workspace/widgets/item_box.dart';
 import 'package:widgetbook_workspace/widgets/grid_view.dart';
 import 'package:widgetbook_workspace/widgets/info_label.dart';
 
 @widgetbook.UseCase(
-  name: 'Multiple',
+  name: 'Multiple Draggable Grids',
   type: DraggableBuilder,
 )
 Widget buildMultipleDraggableBuilderUseCase(BuildContext context) {
@@ -66,7 +66,7 @@ class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuild
                 identifier: topIdentifier,
                 values: _topColors,
                 controller: _controller,
-                itemBuilder: (_, color) => GridItem(color: color),
+                itemBuilder: (_, color) => ItemBox(color: color),
                 itemWhenDraggingBuilder: itemWhenDraggingBuilder,
                 feedbackBuilder: feedbackBuilder,
                 placeholderBuilder: placeholderBuilder,
@@ -79,7 +79,7 @@ class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuild
                 identifier: bottomIdentifier,
                 values: _bottomColors,
                 controller: _controller,
-                itemBuilder: (_, color) => GridItem(color: color),
+                itemBuilder: (_, color) => ItemBox(color: color),
                 itemWhenDraggingBuilder: itemWhenDraggingBuilder,
                 feedbackBuilder: feedbackBuilder,
                 placeholderBuilder: placeholderBuilder,

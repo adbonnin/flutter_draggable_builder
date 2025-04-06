@@ -16,7 +16,7 @@ class WidgetbookApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Widgetbook.material(
-      initialRoute: '?path=draggablebuilder/simple',
+      initialRoute: '?path=draggablegrid',
       directories: directories,
       addons: [
         GitHubAddon('adbonnin/flutter_draggable_builder'),

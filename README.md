@@ -12,7 +12,7 @@ You can check out a live demo using Widgetbook [here](https://adbonnin.github.io
 In your library add the following import:
 
 ```dart
-import 'package:draggable_builder/simple_draggable_builder.dart';
+import 'package:draggable_builder/draggable_grid.dart';
 ```
 
 Add a `DraggableController` property to the `State` of your `StatefulWidget` and initialize it with
@@ -32,7 +32,7 @@ To integrate the `DraggableBuilder` with your scrollable widget, such as `GridVi
 Here’s a simple example:
 
 ```dart
-import 'package:draggable_builder/simple_draggable_builder.dart';
+import 'package:draggable_builder/draggable_grid.dart';
 import 'package:flutter/material.dart';
 
 class _MyHomePageState extends State<MyHomePage> {

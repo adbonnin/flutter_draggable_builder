@@ -121,6 +121,21 @@ class _DraggableBuilderState extends State<DraggableBuilder> {
       return widget.emptyItemBuilder?.call(context) ?? const SizedBox();
     }
 
+    return DragTarget<DraggableDragData>(
+      onMove: (details) => _onDragTargetMove(details, index),
+      builder: (context, __, ___) {
+        if (!widget.feedbackSizeSameAsItem) {
+          return _buildDraggable(context, item);
+        }
+
+        return LayoutBuilder(
+          builder: (context, constraints) => _buildDraggable(context, item, constraints),
+        );
+      },
+    );
+  }
+
+  Widget _buildDraggable(BuildContext context, DraggableItemData item, [BoxConstraints? constraints]) {
     final IndexedWidgetBuilder itemBuilder;
 
     if (item.dragIdentifier == widget.identifier) {
@@ -133,60 +148,51 @@ class _DraggableBuilderState extends State<DraggableBuilder> {
       itemBuilder = widget.itemWhenDraggingBuilder ?? widget.itemBuilder;
     }
 
-    return DragTarget<DraggableDragData>(
-      onMove: (details) => _onDragTargetMove(details, index),
-      builder: (_, __, ___) => LayoutBuilder(
-        builder: (context, constraints) {
-          var effectiveChild = itemBuilder(context, item.dragIndex);
+    var effectiveChild = itemBuilder(context, item.dragIndex);
 
-          if (item.dragIdentifier != DraggableSpecialIdentifier.notDraggable) {
-            final data = DraggableDragData(
-              dragIdentifier: widget.identifier,
-              dragIndex: item.dragIndex,
-              placeholderBuilder: widget.placeholderBuilder ?? (c, i, ___, ____) => widget.itemBuilder(c, i),
-            );
-
-            var effectiveFeedback = widget.feedbackBuilder?.call(context, item.dragIndex) ?? effectiveChild;
-
-            if (widget.feedbackSizeSameAsItem) {
-              effectiveFeedback = SizedBox(
-                width: constraints.maxWidth,
-                height: constraints.maxHeight,
-                child: effectiveFeedback,
-              );
-            }
-
-            if (widget.isLongPress) {
-              effectiveChild = LongPressDraggable<DraggableDragData>(
-                data: data,
-                axis: widget.axis,
-                feedbackOffset: widget.feedbackOffset,
-                dragAnchorStrategy: widget.dragAnchorStrategy,
-                maxSimultaneousDrags: 1,
-                onDragEnd: _onDragEnd,
-                feedback: effectiveFeedback,
-                child: effectiveChild,
-              );
-            } //
-            else {
-              effectiveChild = Draggable<DraggableDragData>(
-                data: data,
-                axis: widget.axis,
-                feedbackOffset: widget.feedbackOffset,
-                dragAnchorStrategy: widget.dragAnchorStrategy,
-                affinity: widget.affinity,
-                maxSimultaneousDrags: 1,
-                onDragEnd: _onDragEnd,
-                feedback: effectiveFeedback,
-                child: effectiveChild,
-              );
-            }
-          }
-
-          return effectiveChild;
-        },
-      ),
+    final data = DraggableDragData(
+      dragIdentifier: widget.identifier,
+      dragIndex: item.dragIndex,
+      placeholderBuilder: widget.placeholderBuilder ?? (c, i, ___, ____) => widget.itemBuilder(c, i),
     );
+
+    var effectiveFeedback = widget.feedbackBuilder?.call(context, item.dragIndex) ?? effectiveChild;
+
+    if (constraints != null) {
+      effectiveFeedback = SizedBox(
+        width: constraints.maxWidth,
+        height: constraints.maxHeight,
+        child: effectiveFeedback,
+      );
+    }
+
+    if (widget.isLongPress) {
+      effectiveChild = LongPressDraggable<DraggableDragData>(
+        data: data,
+        axis: widget.axis,
+        feedbackOffset: widget.feedbackOffset,
+        dragAnchorStrategy: widget.dragAnchorStrategy,
+        maxSimultaneousDrags: 1,
+        onDragEnd: _onDragEnd,
+        feedback: effectiveFeedback,
+        child: effectiveChild,
+      );
+    } //
+    else {
+      effectiveChild = Draggable<DraggableDragData>(
+        data: data,
+        axis: widget.axis,
+        feedbackOffset: widget.feedbackOffset,
+        dragAnchorStrategy: widget.dragAnchorStrategy,
+        affinity: widget.affinity,
+        maxSimultaneousDrags: 1,
+        onDragEnd: _onDragEnd,
+        feedback: effectiveFeedback,
+        child: effectiveChild,
+      );
+    }
+
+    return effectiveChild;
   }
 
   bool get _shouldDisplayEmptyItem {

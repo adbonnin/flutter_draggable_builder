@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
-import 'package:widgetbook_workspace/widgets/grid_item.dart';
+import 'package:widgetbook_workspace/widgets/item_box.dart';
+
+IndexedValueBuilder<Color> buildDefaultValueProvider(ColorSwatch<int> color) {
+  return (index) {
+  final keys = color.keys.toList();
+  final keyIndex = index % keys.length;
+
+  final key = keys[keyIndex];
+  return color[key]!;
+  };
+}
 
 extension KnobsBuilderExtension on KnobsBuilder {
   WidgetBuilder? emptyItemBuilder() {
     return booleanValue(
       label: 'use empty item builder',
       initialValue: true,
-      onTrue: (_) => GridItem(
+      onTrue: (_) => ItemBox(
         color: Colors.grey,
         text: 'Empty',
       ),
@@ -19,7 +29,7 @@ extension KnobsBuilderExtension on KnobsBuilder {
     return booleanValue(
       label: 'use item when dragging builder',
       initialValue: true,
-      onTrue: (_, color) => GridItem(
+      onTrue: (_, color) => ItemBox(
         color: color.withAlpha(128),
         text: 'When\nDragging',
       ),
@@ -31,7 +41,7 @@ extension KnobsBuilderExtension on KnobsBuilder {
     return booleanValue(
       label: 'use feedback builder',
       initialValue: true,
-      onTrue: (_, color) => GridItem(
+      onTrue: (_, color) => ItemBox(
         color: color.withAlpha(128),
         text: 'Feedback',
       ),
@@ -43,7 +53,7 @@ extension KnobsBuilderExtension on KnobsBuilder {
     return booleanValue(
       label: 'use placeholder builder',
       initialValue: true,
-      onTrue: (_, color) => GridItem(
+      onTrue: (_, color) => ItemBox(
         color: color,
         text: 'Placeholder',
       ),
