@@ -1,58 +1,168 @@
-import 'dart:collection';
+typedef IndexedValueProvider<T> = T Function(int index);
 
-typedef ValueBuilder<K, V> = V Function(K key);
-typedef IndexedValueBuilder<V> = ValueBuilder<int, V>;
+class InfiniteIndexedValueProvider<T> {
+  InfiniteIndexedValueProvider(this.defaultValueProvider);
 
-class InfiniteIndexedMap<T> {
-  InfiniteIndexedMap({
-    required IndexedValueBuilder defaultValueBuilder,
-    Map<int, T>? values,
-    Map<int, List<T>>? inserted,
-    Set<int>? removed,
-  }) : _defaultValueBuilder = defaultValueBuilder {
-    _values.addAll(values ?? const {});
-    _inserted.addAll(inserted ?? const {});
-    _removed.addAll(removed ?? const {});
-  }
+  final IndexedValueProvider<T> defaultValueProvider;
+  final List<_ValueChange<T>> _changes = [];
 
-  final IndexedValueBuilder _defaultValueBuilder;
-  final _values = <int, T>{};
-  final _inserted = <int, List<T>>{};
-  final _removed = SplayTreeSet<int>();
-
-  T removeAt(int index) {
-    final realIndex = _realIndex(index);
-    _removed.add(realIndex);
-    return _getAtRealIndex(realIndex);
-  }
+  T call(int index) => this[index];
 
   T operator [](int index) {
-    final realIndex = _realIndex(index);
-    return _getAtRealIndex(realIndex);
+    final changeAt = _changeAt(index);
+    return changeAt.value.valueOr(defaultValueProvider);
   }
 
-  void operator []=(int index, T value) {
-    final realIndex = _realIndex(index);
-    _values[realIndex] = value;
+  void operator []=(int index, T newValue) {
+    final changeAt = _changeAt(index);
+    changeAt.value.applySet(_changes, changeAt.key, newValue);
   }
 
-  int _realIndex(int index) {
-    var countRemoved = 0;
+  void insertAt(int index, T newValue) {
+    final changeAt = _changeAt(index, includeRemove: true);
+    changeAt.value.applyInsert(_changes, changeAt.key, newValue);
+  }
 
-    for (final removed in _removed) {
-      final realIndex = index + countRemoved;
+  T removeAt(int index) {
+    final changeAt = _changeAt(index);
+    changeAt.value.applyRemove(_changes, changeAt.key);
+    return changeAt.value.valueOr(defaultValueProvider);
+  }
 
-      if (removed > realIndex) {
-        return realIndex;
+  MapEntry<int, _ValueChange<T>> _changeAt(int index, {bool includeRemove = false}) {
+    var realIndex = index;
+    int i = 0;
+
+    for (; i < _changes.length; i++) {
+      final change = _changes[i];
+
+      if (change.index > realIndex) {
+        break;
       }
 
-      countRemoved = countRemoved + 1;
+      if (change.index == realIndex) {
+        final mustReturn = includeRemove || change is! _RemoveChange<T>;
+
+        if (mustReturn) {
+          return MapEntry(i, change);
+        }
+      }
+
+      if (change is _InsertChange<T>) {
+        realIndex = realIndex - 1;
+      } //
+      else if (change is _RemoveChange<T>) {
+        realIndex = realIndex + 1;
+      }
     }
 
-    return index + countRemoved;
+    return MapEntry(i, _NoChange<T>(realIndex));
+  }
+}
+
+abstract class _ValueChange<T> {
+  const _ValueChange(this.index);
+
+  final int index;
+
+  T valueOr(IndexedValueProvider<T> valueProvider) {
+    return valueProvider(index);
   }
 
-  T _getAtRealIndex(int realIndex) {
-    return _values.containsKey(realIndex) ? _values[realIndex] : _defaultValueBuilder(realIndex);
+  void applySet(List<_ValueChange<T>> changes, int changeIndex, T newValue);
+
+  void applyInsert(List<_ValueChange<T>> changes, int changeIndex, T newValue);
+
+  void applyRemove(List<_ValueChange<T>> changes, int changeIndex);
+}
+
+class _NoChange<T> extends _ValueChange<T> {
+  const _NoChange(super.index);
+
+  @override
+  void applySet(List<_ValueChange<T>> changes, int changeIndex, T newValue) {
+    changes.insert(changeIndex, _SetChange<T>(index, newValue));
+  }
+
+  @override
+  void applyInsert(List<_ValueChange<T>> changes, int changeIndex, T newValue) {
+    changes.insert(changeIndex, _InsertChange<T>(index, newValue));
+  }
+
+  @override
+  void applyRemove(List<_ValueChange<T>> changes, int changeIndex) {
+    changes.insert(changeIndex, _RemoveChange<T>(index));
+  }
+}
+
+class _SetChange<T> extends _ValueChange<T> {
+  const _SetChange(super.index, this.value);
+
+  final T value;
+
+  @override
+  T valueOr(IndexedValueProvider<T> valueProvider) => value;
+
+  @override
+  void applySet(List<_ValueChange<T>> changes, int changeIndex, T newValue) {
+    changes[changeIndex] = _SetChange<T>(index, newValue);
+  }
+
+  @override
+  void applyInsert(List<_ValueChange<T>> changes, int changeIndex, T newValue) {
+    changes.insert(changeIndex, _InsertChange<T>(index, newValue));
+  }
+
+  @override
+  void applyRemove(List<_ValueChange<T>> changes, int changeIndex) {
+    changes[changeIndex] = _RemoveChange<T>(index);
+  }
+}
+
+class _InsertChange<T> extends _ValueChange<T> {
+  const _InsertChange(super.index, this.value);
+
+  final T value;
+
+  @override
+  T valueOr(IndexedValueProvider<T> valueProvider) => value;
+
+  @override
+  void applySet(List<_ValueChange<T>> changes, int changeIndex, T newValue) {
+    changes[changeIndex] = _InsertChange<T>(index, newValue);
+  }
+
+  @override
+  void applyInsert(List<_ValueChange<T>> changes, int changeIndex, T newValue) {
+    changes.insert(changeIndex, _InsertChange<T>(index, newValue));
+  }
+
+  @override
+  void applyRemove(List<_ValueChange<T>> changes, int changeIndex) {
+    changes.removeAt(changeIndex);
+  }
+}
+
+class _RemoveChange<T> extends _ValueChange<T> {
+  const _RemoveChange(super.index);
+
+  @override
+  T valueOr(IndexedValueProvider<T> valueProvider) {
+    throw UnsupportedError('Cannot retrieve a value from a removed index (index: $index).');
+  }
+
+  @override
+  void applySet(List<_ValueChange<T>> changes, int changeIndex, T newValue) {
+    throw UnsupportedError('Cannot set a value on a removed index (index: $index).');
+  }
+
+  @override
+  void applyInsert(List<_ValueChange<T>> changes, int changeIndex, T newValue) {
+    changes[changeIndex] = _SetChange(index, newValue);
+  }
+
+  @override
+  void applyRemove(List<_ValueChange<T>> changes, int changeIndex) {
+    throw UnsupportedError('Cannot remove an index that has already been removed (index: $index).');
   }
 }

@@ -5,22 +5,26 @@ class DraggableGridView<T> extends StatelessWidget {
   const DraggableGridView({
     super.key,
     required this.identifier,
-    required this.values,
     this.controller,
+    this.itemCount,
+    required this.valueProvider,
     required this.itemBuilder,
     this.itemWhenDraggingBuilder,
     this.placeholderBuilder,
     this.feedbackBuilder,
+    this.feedbackConstraintsSameAsItem = true,
     this.emptyItemBuilder,
   });
 
   final int identifier;
-  final List<T> values;
   final DraggableController? controller;
+  final int? itemCount;
+  final IndexedValueProvider<T> valueProvider;
   final Widget Function(BuildContext context, T value) itemBuilder;
   final Widget Function(BuildContext context, T value)? itemWhenDraggingBuilder;
   final Widget Function(BuildContext context, T value)? placeholderBuilder;
   final Widget Function(BuildContext context, T value)? feedbackBuilder;
+  final bool feedbackConstraintsSameAsItem;
   final Widget Function(BuildContext context)? emptyItemBuilder;
 
   @override
@@ -28,12 +32,13 @@ class DraggableGridView<T> extends StatelessWidget {
     return DraggableBuilder(
       identifier: identifier,
       controller: controller,
-      itemBuilder: (c, i) => itemBuilder(c, values[i]),
-      itemWhenDraggingBuilder: itemWhenDraggingBuilder == null ? null : (c, i) => itemWhenDraggingBuilder!(c, values[i]),
-      feedbackBuilder: feedbackBuilder == null ? null : (c, i) => feedbackBuilder!(c, values[i]),
-      placeholderBuilder: placeholderBuilder == null ? null : (c, i, _, __) => placeholderBuilder!(c, values[i]),
+      itemBuilder: (c, i) => itemBuilder(c, valueProvider(i)),
+      itemWhenDraggingBuilder: itemWhenDraggingBuilder == null ? null : (c, i) => itemWhenDraggingBuilder!(c, valueProvider(i)),
+      feedbackBuilder: feedbackBuilder == null ? null : (c, i) => feedbackBuilder!(c, valueProvider(i)),
+      feedbackConstraintsSameAsItem: feedbackConstraintsSameAsItem,
+      placeholderBuilder: placeholderBuilder == null ? null : (c, i, _, __) => placeholderBuilder!(c, valueProvider(i)),
       emptyItemBuilder: emptyItemBuilder,
-      itemCount: values.length,
+      itemCount: itemCount,
       builder: (_, itemBuilder, itemCount) => MyGridView(
         itemBuilder: itemBuilder,
         itemCount: itemCount,

@@ -24,7 +24,7 @@ class DraggableBuilder extends StatefulWidget {
     this.controller,
     this.axis,
     this.feedbackOffset = Offset.zero,
-    this.feedbackSizeSameAsItem = true,
+    this.feedbackConstraintsSameAsItem = true,
     this.dragAnchorStrategy = childDragAnchorStrategy,
     this.affinity,
     required this.itemBuilder,
@@ -41,7 +41,7 @@ class DraggableBuilder extends StatefulWidget {
   final DraggableController? controller;
   final Axis? axis;
   final Offset feedbackOffset;
-  final bool feedbackSizeSameAsItem;
+  final bool feedbackConstraintsSameAsItem;
   final DragAnchorStrategy dragAnchorStrategy;
   final Axis? affinity;
   final IndexedWidgetBuilder itemBuilder;
@@ -124,7 +124,7 @@ class _DraggableBuilderState extends State<DraggableBuilder> {
     return DragTarget<DraggableDragData>(
       onMove: (details) => _onDragTargetMove(details, index),
       builder: (context, __, ___) {
-        if (!widget.feedbackSizeSameAsItem) {
+        if (!widget.feedbackConstraintsSameAsItem) {
           return _buildDraggable(context, item);
         }
 
@@ -159,9 +159,8 @@ class _DraggableBuilderState extends State<DraggableBuilder> {
     var effectiveFeedback = widget.feedbackBuilder?.call(context, item.dragIndex) ?? effectiveChild;
 
     if (constraints != null) {
-      effectiveFeedback = SizedBox(
-        width: constraints.maxWidth,
-        height: constraints.maxHeight,
+      effectiveFeedback = ConstrainedBox(
+        constraints: constraints,
         child: effectiveFeedback,
       );
     }

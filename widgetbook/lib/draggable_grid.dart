@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 import 'package:widgetbook_workspace/utils/widget_book.dart';
-import 'package:widgetbook_workspace/widgets/item_box.dart';
 import 'package:widgetbook_workspace/widgets/grid_view.dart';
 
 @widgetbook.UseCase(
@@ -24,7 +23,7 @@ class SimpleDraggableBuilderUseCase extends StatefulWidget {
 class _SimpleDraggableBuilderUseCaseState extends State<SimpleDraggableBuilderUseCase> {
   late final DraggableController _controller;
 
-  var _colors = [Colors.red, Colors.yellow, Colors.green, Colors.blue];
+  var _items = rgbColors.toItems();
 
   @override
   void initState() {
@@ -44,6 +43,7 @@ class _SimpleDraggableBuilderUseCaseState extends State<SimpleDraggableBuilderUs
   @override
   Widget build(BuildContext context) {
     final feedbackBuilder = context.knobs.feedbackBuilder();
+    final feedbackConstraintsSameAsItem = context.knobs.feedbackConstraintsSameAsItem();
     final placeholderBuilder = context.knobs.placeholderBuilder();
 
     return SingleChildScrollView(
@@ -51,10 +51,12 @@ class _SimpleDraggableBuilderUseCaseState extends State<SimpleDraggableBuilderUs
         padding: EdgeInsets.all(8),
         child: DraggableGridView(
           identifier: 0,
-          values: _colors,
           controller: _controller,
-          itemBuilder: (_, color) => ItemBox(color: color),
+          itemCount: _items.length,
+          valueProvider: (i) => _items[i],
+          itemBuilder: itemBuilder,
           feedbackBuilder: feedbackBuilder,
+          feedbackConstraintsSameAsItem: feedbackConstraintsSameAsItem,
           placeholderBuilder: placeholderBuilder,
         ),
       ),
@@ -62,14 +64,14 @@ class _SimpleDraggableBuilderUseCaseState extends State<SimpleDraggableBuilderUs
   }
 
   void _onDragCompletion(Object dragId, int dragIndex, Object targetId, int targetIndex) {
-    final color = _colors[dragIndex];
+    final color = _items[dragIndex];
 
-    final newColors = [..._colors] //
+    final newColors = [..._items] //
       ..removeAt(dragIndex)
       ..insert(targetIndex, color);
 
     setState(() {
-      _colors = newColors;
+      _items = newColors;
     });
   }
 }

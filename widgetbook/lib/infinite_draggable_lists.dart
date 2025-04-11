@@ -4,7 +4,6 @@ import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 import 'package:widgetbook_workspace/utils/widget_book.dart';
 import 'package:widgetbook_workspace/widgets/info_label.dart';
-import 'package:widgetbook_workspace/widgets/item_box.dart';
 import 'package:widgetbook_workspace/widgets/list_view.dart';
 
 @widgetbook.UseCase(
@@ -28,11 +27,8 @@ class _InfiniteDraggableListsUseCaseState extends State<InfiniteDraggableListsUs
   static const leftIdentifier = 0;
   static const rightIdentifier = 1;
 
-  static final leftDefaultValueProvider = buildDefaultValueProvider(Colors.red);
-  static final rightDefaultValueProvider = buildDefaultValueProvider(Colors.blue);
-
-  var _leftColorsByIndex = <int, Color>{};
-  var _rightColorsByIndex = <int, Color>{};
+  final leftItems = InfiniteIndexedValueProvider(buildDefaultValueProvider(rgbColors));
+  final rightItems = InfiniteIndexedValueProvider(buildDefaultValueProvider(cmyColors));
 
   @override
   void initState() {
@@ -54,24 +50,26 @@ class _InfiniteDraggableListsUseCaseState extends State<InfiniteDraggableListsUs
     final emptyItemBuilder = context.knobs.emptyItemBuilder();
     final itemWhenDraggingBuilder = context.knobs.itemWhenDraggingBuilder();
     final feedbackBuilder = context.knobs.feedbackBuilder();
+    final feedbackConstraintsSameAsItem = context.knobs.feedbackConstraintsSameAsItem();
     final placeholderBuilder = context.knobs.placeholderBuilder();
 
     return Padding(
       padding: EdgeInsets.all(8),
       child: Row(
-        spacing: 8,
+        spacing: 12,
         children: [
           Expanded(
             child: InfoLabel(
               labelText: "Left Draggable ListView",
               child: Expanded(
-                child: DraggableInfiniteListView(
+                child: DraggableListView(
                   identifier: leftIdentifier,
-                  valueProvider: buildValueProvider(_leftColorsByIndex, leftDefaultValueProvider),
+                  valueProvider: leftItems.call,
                   controller: _controller,
-                  itemBuilder: (_, color) => ItemBox(color: color),
+                  itemBuilder: itemBuilder,
                   itemWhenDraggingBuilder: itemWhenDraggingBuilder,
                   feedbackBuilder: feedbackBuilder,
+                  feedbackConstraintsSameAsItem: feedbackConstraintsSameAsItem,
                   placeholderBuilder: placeholderBuilder,
                   emptyItemBuilder: emptyItemBuilder,
                 ),
@@ -82,13 +80,14 @@ class _InfiniteDraggableListsUseCaseState extends State<InfiniteDraggableListsUs
             child: InfoLabel(
               labelText: "Right Draggable ListView",
               child: Expanded(
-                child: DraggableInfiniteListView(
+                child: DraggableListView(
                   identifier: rightIdentifier,
-                  valueProvider: buildValueProvider(_rightColorsByIndex, rightDefaultValueProvider),
+                  valueProvider: rightItems.call,
                   controller: _controller,
-                  itemBuilder: (_, color) => ItemBox(color: color),
+                  itemBuilder: itemBuilder,
                   itemWhenDraggingBuilder: itemWhenDraggingBuilder,
                   feedbackBuilder: feedbackBuilder,
+                  feedbackConstraintsSameAsItem: feedbackConstraintsSameAsItem,
                   placeholderBuilder: placeholderBuilder,
                   emptyItemBuilder: emptyItemBuilder,
                 ),
@@ -101,21 +100,12 @@ class _InfiniteDraggableListsUseCaseState extends State<InfiniteDraggableListsUs
   }
 
   void _onDragCompletion(Object dragId, int dragIndex, Object targetId, int targetIndex) {
-    var newLeftColorsByIndex = {..._leftColorsByIndex};
-    var newRightColorsByIndex = {..._rightColorsByIndex};
+    final dragColors = dragId == leftIdentifier ? leftItems : rightItems;
+    final targetColors = targetId == leftIdentifier ? leftItems : rightItems;
 
-    final dragColors = dragId == leftIdentifier
-        ? buildValueProvider(_leftColorsByIndex, leftDefaultValueProvider, true)
-        : buildValueProvider(_rightColorsByIndex, rightDefaultValueProvider, true);
+    final color = dragColors.removeAt(dragIndex);
+    targetColors.insertAt(targetIndex, color);
 
-    final targetColors = targetId == leftIdentifier ? newLeftColorsByIndex : newRightColorsByIndex;
-
-    final color = dragColors(dragIndex);
-    targetColors[targetIndex] = color;
-
-    setState(() {
-      _leftColorsByIndex = newLeftColorsByIndex;
-      _rightColorsByIndex = newRightColorsByIndex;
-    });
+    setState(() {});
   }
 }

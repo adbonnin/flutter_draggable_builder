@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 import 'package:widgetbook_workspace/utils/widget_book.dart';
-import 'package:widgetbook_workspace/widgets/item_box.dart';
 import 'package:widgetbook_workspace/widgets/grid_view.dart';
 import 'package:widgetbook_workspace/widgets/info_label.dart';
 
@@ -28,8 +27,8 @@ class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuild
   static const topIdentifier = 0;
   static const bottomIdentifier = 1;
 
-  var _topColors = [Colors.red, Colors.green];
-  var _bottomColors = <Color>[Colors.blue, Colors.yellow];
+  var _topItems = rgbColors.toItems();
+  var _bottomItems = cmyColors.toItems();
 
   @override
   void initState() {
@@ -51,6 +50,7 @@ class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuild
     final emptyItemBuilder = context.knobs.emptyItemBuilder();
     final itemWhenDraggingBuilder = context.knobs.itemWhenDraggingBuilder();
     final feedbackBuilder = context.knobs.feedbackBuilder();
+    final feedbackConstraintsSameAsItem = context.knobs.feedbackConstraintsSameAsItem();
     final placeholderBuilder = context.knobs.placeholderBuilder();
 
     return SingleChildScrollView(
@@ -58,17 +58,19 @@ class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuild
         padding: EdgeInsets.all(8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          spacing: 8,
+          spacing: 12,
           children: [
             InfoLabel(
               labelText: "Top Draggable GridView",
               child: DraggableGridView(
                 identifier: topIdentifier,
-                values: _topColors,
                 controller: _controller,
-                itemBuilder: (_, color) => ItemBox(color: color),
+                itemCount: _topItems.length,
+                valueProvider: (i) => _topItems[i],
+                itemBuilder: itemBuilder,
                 itemWhenDraggingBuilder: itemWhenDraggingBuilder,
                 feedbackBuilder: feedbackBuilder,
+                feedbackConstraintsSameAsItem: feedbackConstraintsSameAsItem,
                 placeholderBuilder: placeholderBuilder,
                 emptyItemBuilder: emptyItemBuilder,
               ),
@@ -77,11 +79,13 @@ class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuild
               labelText: "Bottom Draggable GridView",
               child: DraggableGridView(
                 identifier: bottomIdentifier,
-                values: _bottomColors,
                 controller: _controller,
-                itemBuilder: (_, color) => ItemBox(color: color),
+                itemCount: _bottomItems.length,
+                valueProvider: (i) => _bottomItems[i],
+                itemBuilder: itemBuilder,
                 itemWhenDraggingBuilder: itemWhenDraggingBuilder,
                 feedbackBuilder: feedbackBuilder,
+                feedbackConstraintsSameAsItem: feedbackConstraintsSameAsItem,
                 placeholderBuilder: placeholderBuilder,
                 emptyItemBuilder: emptyItemBuilder,
               ),
@@ -93,8 +97,8 @@ class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuild
   }
 
   void _onDragCompletion(Object dragId, int dragIndex, Object targetId, int targetIndex) {
-    var newTopColors = [..._topColors];
-    var newBottomColors = [..._bottomColors];
+    var newTopColors = [..._topItems];
+    var newBottomColors = [..._bottomItems];
 
     final dragColors = dragId == topIdentifier ? newTopColors : newBottomColors;
     final targetColors = targetId == topIdentifier ? newTopColors : newBottomColors;
@@ -103,8 +107,8 @@ class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuild
     targetColors.insert(targetIndex, color);
 
     setState(() {
-      _topColors = newTopColors;
-      _bottomColors = newBottomColors;
+      _topItems = newTopColors;
+      _bottomItems = newBottomColors;
     });
   }
 }
