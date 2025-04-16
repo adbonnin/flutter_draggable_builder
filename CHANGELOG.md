@@ -1,3 +1,5 @@
+## 0.0.3
+
 ## 0.0.2
 
 * Refactor: Renamed `id` to `identifier` in `DraggableBuilder` for clarity and consistency.
