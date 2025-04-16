@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_workspace/models/item.dart';
+import 'package:widgetbook_workspace/utils/axis_knob.dart';
+import 'package:widgetbook_workspace/utils/drag_anchor_strategy_knob.dart';
 import 'package:widgetbook_workspace/widgets/item_box.dart';
 import 'package:draggable_builder/draggable_builder.dart';
 
@@ -36,15 +38,44 @@ extension ColorListExtension on List<Color> {
 }
 
 extension KnobsBuilderExtension on KnobsBuilder {
-  WidgetBuilder? emptyItemBuilder() {
-    return booleanValue(
-      label: 'use empty item builder',
-      initialValue: true,
-      onTrue: (_) => ItemBox(
-        color: Colors.grey,
-        label: 'Empty',
+  bool isLongPress() {
+    return boolean(
+      label: 'is long press',
+      initialValue: false,
+    );
+  }
+
+  Axis? axis() {
+    return onKnobAdded(
+      AxisKnob.nullable(
+        label: 'axis',
+        initialValue: null,
       ),
-      onFalse: null,
+    );
+  }
+
+  bool feedbackConstraintsSameAsItem() {
+    return boolean(
+      label: 'feedback constraints same as item',
+      initialValue: true,
+    );
+  }
+
+  DragAnchorStrategy dragAnchorStrategy() {
+    return onKnobAdded(
+      DragAnchorStrategyKnob(
+        label: 'drag anchor strategy field',
+        initialValue: childDragAnchorStrategy,
+      ),
+    )!;
+  }
+
+  Axis? affinity() {
+    return onKnobAdded(
+      AxisKnob.nullable(
+        label: 'affinity',
+        initialValue: null,
+      ),
     );
   }
 
@@ -74,13 +105,6 @@ extension KnobsBuilderExtension on KnobsBuilder {
     );
   }
 
-  bool feedbackConstraintsSameAsItem() {
-    return boolean(
-      label: 'feedback constraints same as item',
-      initialValue: true,
-    );
-  }
-
   Widget Function(BuildContext, Item)? placeholderBuilder() {
     return booleanValue(
       label: 'use placeholder builder',
@@ -94,17 +118,29 @@ extension KnobsBuilderExtension on KnobsBuilder {
     );
   }
 
+  WidgetBuilder? emptyItemBuilder() {
+    return booleanValue(
+      label: 'use empty item builder',
+      initialValue: true,
+      onTrue: (_) => ItemBox(
+        color: Colors.grey,
+        label: 'Empty',
+      ),
+      onFalse: null,
+    );
+  }
+
   T booleanValue<T>({
     required String label,
-    String? description,
     bool initialValue = false,
+    String? description,
     required T onTrue,
     required T onFalse,
   }) {
     final value = boolean(
       label: label,
-      description: description,
       initialValue: initialValue,
+      description: description,
     );
 
     return value ? onTrue : onFalse;

@@ -1,6 +1,9 @@
 ## 0.0.2
 
-* Mention support for multiple draggable containers and item exchange
+* Refactor: Renamed `id` to `identifier` in `DraggableBuilder` for clarity and consistency.
+* Refactor: Renamed `feedbackSizeSameAsItem` to `feedbackConstraintsSameAsItem` in `DraggableBuilder` to better reflect its purpose.
+* Feature: Added `InfiniteIndexedValueProvider` to support infinite dragging behavior in builders.
+* Docs: Improved and clarified documentation throughout the codebase.
 
 ## 0.0.1
 

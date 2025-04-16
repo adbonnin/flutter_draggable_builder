@@ -47,12 +47,6 @@ class _InfiniteDraggableListsUseCaseState extends State<InfiniteDraggableListsUs
 
   @override
   Widget build(BuildContext context) {
-    final emptyItemBuilder = context.knobs.emptyItemBuilder();
-    final itemWhenDraggingBuilder = context.knobs.itemWhenDraggingBuilder();
-    final feedbackBuilder = context.knobs.feedbackBuilder();
-    final feedbackConstraintsSameAsItem = context.knobs.feedbackConstraintsSameAsItem();
-    final placeholderBuilder = context.knobs.placeholderBuilder();
-
     return Padding(
       padding: EdgeInsets.all(8),
       child: Row(
@@ -64,14 +58,18 @@ class _InfiniteDraggableListsUseCaseState extends State<InfiniteDraggableListsUs
               child: Expanded(
                 child: DraggableListView(
                   identifier: leftIdentifier,
-                  valueProvider: leftItems.call,
+                  isLongPress: context.knobs.isLongPress(),
                   controller: _controller,
+                  axis: context.knobs.axis(),
+                  feedbackConstraintsSameAsItem: context.knobs.feedbackConstraintsSameAsItem(),
+                  dragAnchorStrategy: context.knobs.dragAnchorStrategy(),
+                  affinity: context.knobs.affinity(),
                   itemBuilder: itemBuilder,
-                  itemWhenDraggingBuilder: itemWhenDraggingBuilder,
-                  feedbackBuilder: feedbackBuilder,
-                  feedbackConstraintsSameAsItem: feedbackConstraintsSameAsItem,
-                  placeholderBuilder: placeholderBuilder,
-                  emptyItemBuilder: emptyItemBuilder,
+                  itemWhenDraggingBuilder: context.knobs.itemWhenDraggingBuilder(),
+                  feedbackBuilder: context.knobs.feedbackBuilder(),
+                  placeholderBuilder: context.knobs.placeholderBuilder(),
+                  emptyItemBuilder: context.knobs.emptyItemBuilder(),
+                  valueProvider: leftItems.call,
                 ),
               ),
             ),
@@ -82,14 +80,18 @@ class _InfiniteDraggableListsUseCaseState extends State<InfiniteDraggableListsUs
               child: Expanded(
                 child: DraggableListView(
                   identifier: rightIdentifier,
-                  valueProvider: rightItems.call,
+                  isLongPress: context.knobs.isLongPress(),
                   controller: _controller,
+                  axis: context.knobs.axis(),
+                  feedbackConstraintsSameAsItem: context.knobs.feedbackConstraintsSameAsItem(),
+                  dragAnchorStrategy: context.knobs.dragAnchorStrategy(),
+                  affinity: context.knobs.affinity(),
                   itemBuilder: itemBuilder,
-                  itemWhenDraggingBuilder: itemWhenDraggingBuilder,
-                  feedbackBuilder: feedbackBuilder,
-                  feedbackConstraintsSameAsItem: feedbackConstraintsSameAsItem,
-                  placeholderBuilder: placeholderBuilder,
-                  emptyItemBuilder: emptyItemBuilder,
+                  itemWhenDraggingBuilder: context.knobs.itemWhenDraggingBuilder(),
+                  feedbackBuilder: context.knobs.feedbackBuilder(),
+                  placeholderBuilder: context.knobs.placeholderBuilder(),
+                  emptyItemBuilder: context.knobs.emptyItemBuilder(),
+                  valueProvider: rightItems.call,
                 ),
               ),
             ),

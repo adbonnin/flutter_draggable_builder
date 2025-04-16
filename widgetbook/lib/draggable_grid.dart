@@ -9,18 +9,18 @@ import 'package:widgetbook_workspace/widgets/grid_view.dart';
   name: 'Draggable Grid',
   type: DraggableBuilder,
 )
-Widget buildSimpleDraggableBuilderUseCase(BuildContext context) {
-  return SimpleDraggableBuilderUseCase();
+Widget buildDraggableGridUseCase(BuildContext context) {
+  return DraggableGridUseCase();
 }
 
-class SimpleDraggableBuilderUseCase extends StatefulWidget {
-  const SimpleDraggableBuilderUseCase({super.key});
+class DraggableGridUseCase extends StatefulWidget {
+  const DraggableGridUseCase({super.key});
 
   @override
-  State<SimpleDraggableBuilderUseCase> createState() => _SimpleDraggableBuilderUseCaseState();
+  State<DraggableGridUseCase> createState() => _DraggableGridUseCaseState();
 }
 
-class _SimpleDraggableBuilderUseCaseState extends State<SimpleDraggableBuilderUseCase> {
+class _DraggableGridUseCaseState extends State<DraggableGridUseCase> {
   late final DraggableController _controller;
 
   var _items = rgbColors.toItems();
@@ -42,22 +42,22 @@ class _SimpleDraggableBuilderUseCaseState extends State<SimpleDraggableBuilderUs
 
   @override
   Widget build(BuildContext context) {
-    final feedbackBuilder = context.knobs.feedbackBuilder();
-    final feedbackConstraintsSameAsItem = context.knobs.feedbackConstraintsSameAsItem();
-    final placeholderBuilder = context.knobs.placeholderBuilder();
-
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(8),
         child: DraggableGridView(
           identifier: 0,
+          isLongPress: context.knobs.isLongPress(),
           controller: _controller,
-          itemCount: _items.length,
-          valueProvider: (i) => _items[i],
+          axis: context.knobs.axis(),
+          feedbackConstraintsSameAsItem: context.knobs.feedbackConstraintsSameAsItem(),
+          dragAnchorStrategy: context.knobs.dragAnchorStrategy(),
+          affinity: context.knobs.affinity(),
           itemBuilder: itemBuilder,
-          feedbackBuilder: feedbackBuilder,
-          feedbackConstraintsSameAsItem: feedbackConstraintsSameAsItem,
-          placeholderBuilder: placeholderBuilder,
+          feedbackBuilder: context.knobs.feedbackBuilder(),
+          placeholderBuilder: context.knobs.placeholderBuilder(),
+          valueProvider: (i) => _items[i],
+          itemCount: _items.length,
         ),
       ),
     );

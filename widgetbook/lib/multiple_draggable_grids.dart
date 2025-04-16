@@ -10,18 +10,18 @@ import 'package:widgetbook_workspace/widgets/info_label.dart';
   name: 'Multiple Draggable Grids',
   type: DraggableBuilder,
 )
-Widget buildMultipleDraggableBuilderUseCase(BuildContext context) {
-  return MultipleDraggableBuilderUseCase();
+Widget buildMultipleDraggableGridsUseCase(BuildContext context) {
+  return MultipleDraggableGridsUseCase();
 }
 
-class MultipleDraggableBuilderUseCase extends StatefulWidget {
-  const MultipleDraggableBuilderUseCase({super.key});
+class MultipleDraggableGridsUseCase extends StatefulWidget {
+  const MultipleDraggableGridsUseCase({super.key});
 
   @override
-  State<MultipleDraggableBuilderUseCase> createState() => _MultipleDraggableBuilderUseCaseState();
+  State<MultipleDraggableGridsUseCase> createState() => _MultipleDraggableGridsUseCaseState();
 }
 
-class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuilderUseCase> {
+class _MultipleDraggableGridsUseCaseState extends State<MultipleDraggableGridsUseCase> {
   late final DraggableController _controller;
 
   static const topIdentifier = 0;
@@ -47,12 +47,6 @@ class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuild
 
   @override
   Widget build(BuildContext context) {
-    final emptyItemBuilder = context.knobs.emptyItemBuilder();
-    final itemWhenDraggingBuilder = context.knobs.itemWhenDraggingBuilder();
-    final feedbackBuilder = context.knobs.feedbackBuilder();
-    final feedbackConstraintsSameAsItem = context.knobs.feedbackConstraintsSameAsItem();
-    final placeholderBuilder = context.knobs.placeholderBuilder();
-
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(8),
@@ -64,30 +58,38 @@ class _MultipleDraggableBuilderUseCaseState extends State<MultipleDraggableBuild
               labelText: "Top Draggable GridView",
               child: DraggableGridView(
                 identifier: topIdentifier,
+                isLongPress: context.knobs.isLongPress(),
                 controller: _controller,
+                axis: context.knobs.axis(),
+                feedbackConstraintsSameAsItem: context.knobs.feedbackConstraintsSameAsItem(),
+                dragAnchorStrategy: context.knobs.dragAnchorStrategy(),
+                affinity: context.knobs.affinity(),
+                itemBuilder: itemBuilder,
+                itemWhenDraggingBuilder: context.knobs.itemWhenDraggingBuilder(),
+                feedbackBuilder: context.knobs.feedbackBuilder(),
+                placeholderBuilder: context.knobs.placeholderBuilder(),
+                emptyItemBuilder: context.knobs.emptyItemBuilder(),
                 itemCount: _topItems.length,
                 valueProvider: (i) => _topItems[i],
-                itemBuilder: itemBuilder,
-                itemWhenDraggingBuilder: itemWhenDraggingBuilder,
-                feedbackBuilder: feedbackBuilder,
-                feedbackConstraintsSameAsItem: feedbackConstraintsSameAsItem,
-                placeholderBuilder: placeholderBuilder,
-                emptyItemBuilder: emptyItemBuilder,
               ),
             ),
             InfoLabel(
               labelText: "Bottom Draggable GridView",
               child: DraggableGridView(
                 identifier: bottomIdentifier,
+                isLongPress: context.knobs.isLongPress(),
                 controller: _controller,
+                axis: context.knobs.axis(),
+                feedbackConstraintsSameAsItem: context.knobs.feedbackConstraintsSameAsItem(),
+                dragAnchorStrategy: context.knobs.dragAnchorStrategy(),
+                affinity: context.knobs.affinity(),
+                itemBuilder: itemBuilder,
+                itemWhenDraggingBuilder: context.knobs.itemWhenDraggingBuilder(),
+                feedbackBuilder: context.knobs.feedbackBuilder(),
+                placeholderBuilder: context.knobs.placeholderBuilder(),
+                emptyItemBuilder: context.knobs.emptyItemBuilder(),
                 itemCount: _bottomItems.length,
                 valueProvider: (i) => _bottomItems[i],
-                itemBuilder: itemBuilder,
-                itemWhenDraggingBuilder: itemWhenDraggingBuilder,
-                feedbackBuilder: feedbackBuilder,
-                feedbackConstraintsSameAsItem: feedbackConstraintsSameAsItem,
-                placeholderBuilder: placeholderBuilder,
-                emptyItemBuilder: emptyItemBuilder,
               ),
             ),
           ],
