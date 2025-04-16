@@ -1,10 +1,15 @@
 typedef IndexedValueProvider<T> = T Function(int index);
 
-class InfiniteIndexedValueProvider<T> {
+class InfiniteIndexedValueProvider<T> extends Iterable<T> {
   InfiniteIndexedValueProvider(this.defaultValueProvider);
 
   final IndexedValueProvider<T> defaultValueProvider;
   final List<_ValueChange<T>> _changes = [];
+
+  @override
+  Iterator<T> get iterator {
+    return _InfiniteIndexedValueIterator(this);
+  }
 
   T call(int index) => this[index];
 
@@ -164,5 +169,21 @@ class _RemoveChange<T> extends _ValueChange<T> {
   @override
   void applyRemove(List<_ValueChange<T>> changes, int changeIndex) {
     throw UnsupportedError('Cannot remove an index that has already been removed (index: $index).');
+  }
+}
+
+class _InfiniteIndexedValueIterator<T> implements Iterator<T> {
+  _InfiniteIndexedValueIterator(this._valueProvider);
+
+  final InfiniteIndexedValueProvider<T> _valueProvider;
+  int _currentIndex = -1;
+
+  @override
+  T get current => _valueProvider[_currentIndex];
+
+  @override
+  bool moveNext() {
+    _currentIndex++;
+    return true;
   }
 }

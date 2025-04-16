@@ -16,6 +16,11 @@ void main() {
     expect(map[5], 5);
   });
 
+  test("should return an iterator", () {
+    // expect:
+    expect(map.take(5), orderedEquals([0, 1, 2, 3, 4]));
+  });
+
   test("should set value at index", () {
     // when:
     map[5] = 100;
@@ -71,7 +76,7 @@ void main() {
       expect(map[6], 6);
     });
 
-    test("should set value with a higher index", () {
+    test("should set value at a higher index", () {
       // when:
       map[7] = 101;
 
@@ -81,7 +86,7 @@ void main() {
       expect(map[7], 101);
     });
 
-    test("should insert value at lower index", () {
+    test("should insert value at a lower index", () {
       // when:
       map.insertAt(3, 99);
 
@@ -103,7 +108,7 @@ void main() {
       expect(map[7], 6);
     });
 
-    test("should insert value at higher index", () {
+    test("should insert value at a higher index", () {
       // when:
       map.insertAt(7, 101);
 
@@ -114,7 +119,7 @@ void main() {
       expect(map[8], 7);
     });
 
-    test("should remove a value at a lower index", () {
+    test("should remove value at a lower index", () {
       // when:
       map.removeAt(3);
 
@@ -125,7 +130,7 @@ void main() {
       expect(map[5], 6);
     });
 
-    test("should remove a value at the same index", () {
+    test("should remove value at same index", () {
       // when:
       map.removeAt(5);
 
@@ -134,7 +139,7 @@ void main() {
       expect(map[5], 6);
     });
 
-    test("should remove a value at a higher index", () {
+    test("should remove value at a higher index", () {
       // when:
       map.removeAt(7);
 
@@ -146,13 +151,174 @@ void main() {
     });
   });
 
+  group("with a value inserted at index", () {
+    // with:
+    setUp(() {
+      map.insertAt(5, 100);
+    });
+
+    test("should set value at a lower index", () {
+      // when:
+      map[3] = 99;
+
+      // then:
+      expect(map[3], 99);
+      expect(map[4], 4);
+      expect(map[5], 100);
+    });
+
+    test("should set value at same index", () {
+      // when:
+      map[5] = 101;
+
+      // then:
+      expect(map[4], 4);
+      expect(map[5], 101);
+      expect(map[6], 5);
+    });
+
+    test("should set value at a higher index", () {
+      // when:
+      map[7] = 101;
+
+      // then:
+      expect(map[5], 100);
+      expect(map[6], 5);
+      expect(map[7], 101);
+    });
+
+    test("should insert value at a lower index", () {
+      // when:
+      map.insertAt(3, 99);
+
+      // then:
+      expect(map[3], 99);
+      expect(map[4], 3);
+      expect(map[5], 4);
+      expect(map[6], 100);
+    });
+
+    test("should insert value at same index", () {
+      // when:
+      map.insertAt(5, 99);
+
+      // then:
+      expect(map[4], 4);
+      expect(map[5], 99);
+      expect(map[6], 100);
+      expect(map[7], 5);
+    });
+
+    test("should insert value at a higher index", () {
+      // when:
+      map.insertAt(7, 101);
+
+      // then:
+      expect(map[5], 100);
+      expect(map[6], 5);
+      expect(map[7], 101);
+      expect(map[8], 6);
+    });
+
+    test("should remove value at a lower index", () {
+      // when:
+      map.removeAt(3);
+
+      // then:
+      expect(map[2], 2);
+      expect(map[3], 4);
+      expect(map[4], 100);
+      expect(map[5], 5);
+    });
+
+    test("should remove value at same index", () {
+      // when:
+      map.removeAt(5);
+
+      // then:
+      expect(map[4], 4);
+      expect(map[5], 5);
+    });
+
+    test("should remove value at a higher index", () {
+      // when:
+      map.removeAt(7);
+
+      // then:
+      expect(map[4], 4);
+      expect(map[5], 100);
+      expect(map[6], 5);
+      expect(map[7], 7);
+    });
+  });
+
   group("with a value removed at index", () {
     // with:
     setUp(() {
       map.removeAt(5);
     });
 
-    test("should remove another value at a lower index", () {
+    test("should set value at a lower index", () {
+      // when:
+      map[3] = 100;
+
+      // then:
+      expect(map[3], 100);
+      expect(map[4], 4);
+      expect(map[5], 6);
+    });
+
+    test("should set value at same index", () {
+      // when:
+      map[5] = 100;
+
+      // then:
+      expect(map[5], 100);
+    });
+
+    test("should set value at a higher index", () {
+      // when:
+      map[7] = 100;
+
+      // then:
+      expect(map[5], 6);
+      expect(map[6], 7);
+      expect(map[7], 100);
+    });
+
+    test("should insert value at a lower index", () {
+      // when:
+      map.insertAt(3, 99);
+
+      // then:
+      expect(map[3], 99);
+      expect(map[4], 3);
+      expect(map[5], 4);
+      expect(map[6], 6);
+    });
+
+    test("should insert value at same index", () {
+      // when:
+      map.insertAt(5, 99);
+
+      // then:
+      expect(map[4], 4);
+      expect(map[5], 99);
+      expect(map[6], 6);
+    });
+
+    test("should insert value at a higher index", () {
+      // when:
+      map.insertAt(7, 101);
+
+      // then:
+      expect(map[4], 4);
+      expect(map[5], 6);
+      expect(map[6], 7);
+      expect(map[7], 101);
+    });
+
+    test("should remove value at a lower index", () {
       // when:
       map.removeAt(3);
 
@@ -163,7 +329,7 @@ void main() {
       expect(map[5], 7);
     });
 
-    test("should remove another value at the same index", () {
+    test("should remove value at same index", () {
       // when:
       map.removeAt(5);
 
@@ -172,7 +338,7 @@ void main() {
       expect(map[5], 7);
     });
 
-    test("should remove another value at a higher index", () {
+    test("should remove value at a higher index", () {
       // when:
       map.removeAt(7);
 
@@ -181,33 +347,6 @@ void main() {
       expect(map[5], 6);
       expect(map[6], 7);
       expect(map[7], 9);
-    });
-
-    test("should set value at lower index", () {
-      // when:
-      map[3] = 100;
-
-      // then:
-      expect(map[3], 100);
-      expect(map[4], 4);
-      expect(map[5], 6);
-    });
-
-    test("should set value at index", () {
-      // when:
-      map[5] = 100;
-
-      // then:
-      expect(map[5], 100);
-    });
-
-    test("should set value at higher index", () {
-      // when:
-      map[6] = 100;
-
-      // then:
-      expect(map[5], 6);
-      expect(map[6], 100);
     });
   });
 }
