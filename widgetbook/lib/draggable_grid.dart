@@ -2,6 +2,7 @@ import 'package:draggable_builder/draggable_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
+import 'package:widgetbook_workspace/models/item.dart';
 import 'package:widgetbook_workspace/utils/widget_book.dart';
 import 'package:widgetbook_workspace/widgets/grid_view.dart';
 
@@ -21,7 +22,7 @@ class DraggableGridUseCase extends StatefulWidget {
 }
 
 class _DraggableGridUseCaseState extends State<DraggableGridUseCase> {
-  late final DraggableController _controller;
+  late final DraggableController<String> _controller;
 
   var _items = rgbColors.toItems();
 
@@ -45,8 +46,8 @@ class _DraggableGridUseCaseState extends State<DraggableGridUseCase> {
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(8),
-        child: DraggableGridView(
-          identifier: 0,
+        child: DraggableGridView<String, Item>(
+          identifier: 'id',
           isLongPress: context.knobs.isLongPress(),
           controller: _controller,
           axis: context.knobs.axis(),
@@ -63,7 +64,7 @@ class _DraggableGridUseCaseState extends State<DraggableGridUseCase> {
     );
   }
 
-  void _onDragCompletion(Object dragId, int dragIndex, Object targetId, int targetIndex) {
+  void _onDragCompletion(String dragId, int dragIndex, String targetId, int targetIndex) {
     final color = _items[dragIndex];
 
     final newColors = [..._items] //

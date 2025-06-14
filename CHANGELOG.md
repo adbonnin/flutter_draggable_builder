@@ -1,6 +1,7 @@
 ## 1.0.0
 
 * Feature: Add wrapWithDragTarget property
+* Feature: Add genetic type for ID
 
 ## 0.0.2
 

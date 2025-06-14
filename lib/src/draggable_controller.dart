@@ -1,23 +1,22 @@
-import 'package:flutter/widgets.dart';
-import 'package:draggable_builder/src/draggable_constants.dart';
 import 'package:draggable_builder/src/draggable_data.dart';
+import 'package:flutter/widgets.dart';
 
-typedef DragCompletionCallback = void Function(Object dragId, int dragIndex, Object targetId, int targetIndex);
+typedef DragCompletionCallback<ID> = void Function(ID dragId, int dragIndex, ID targetId, int targetIndex);
 
-class DraggableController with ChangeNotifier {
+class DraggableController<ID> with ChangeNotifier {
   DraggableController({
     this.onDragCompletion,
   });
 
-  DragCompletionCallback? onDragCompletion;
+  DragCompletionCallback<ID>? onDragCompletion;
 
-  DraggableDraggedData? _data;
+  DraggableDraggedData<ID>? _data;
 
-  int? computeItemCount(Object id, int? itemCount) {
+  int? computeItemCount(ID id, int? itemCount) {
     return _data?.computeItemCount(id, itemCount) ?? itemCount;
   }
 
-  DraggableItemData computeItem(Object id, int index) {
+  DraggableItemData<ID> computeItem(ID id, int index) {
     final effectiveIndex = _data?.computeEffectiveIndex(id, index) ?? index;
 
     if (effectiveIndex < 0) {
@@ -46,7 +45,7 @@ class DraggableController with ChangeNotifier {
     return index;
   }
 
-  void onDragTargetMove(DraggableDragData drag, Object targetIdentifier, int? targetIndex, int? targetCount) {
+  void onDragTargetMove(DraggableDragData<ID> drag, ID targetIdentifier, int? targetIndex, int? targetCount) {
     if (targetIndex == null) {
       if (drag.dragIdentifier == targetIdentifier) {
         return;
@@ -63,7 +62,7 @@ class DraggableController with ChangeNotifier {
       targetIndex = targetCount ?? 0;
     }
 
-    final data = DraggableDraggedData(
+    final data = DraggableDraggedData<ID>(
       dragIdentifier: drag.dragIdentifier,
       dragIndex: drag.dragIndex,
       placeholderBuilder: drag.placeholderBuilder,
@@ -80,7 +79,7 @@ class DraggableController with ChangeNotifier {
   }
 
   void onDragEnd() {
-    if (_data is DraggableDraggedData) {
+    if (_data is DraggableDraggedData<ID>) {
       onDragCompletion?.callWithData(_data!);
     }
 
@@ -89,8 +88,8 @@ class DraggableController with ChangeNotifier {
   }
 }
 
-extension _DraggableDraggedDataExtension on DraggableDraggedData {
-  int? computeItemCount(Object id, int? itemCount) {
+extension _DraggableDraggedDataExtension<ID> on DraggableDraggedData<ID> {
+  int? computeItemCount(ID id, int? itemCount) {
     if (itemCount == null || !itemCount.isFinite) {
       return itemCount;
     }
@@ -108,7 +107,7 @@ extension _DraggableDraggedDataExtension on DraggableDraggedData {
     return itemCount;
   }
 
-  int computeEffectiveIndex(Object id, int index) {
+  int computeEffectiveIndex(ID id, int index) {
     if (dragIdentifier != targetIdentifier) {
       // if (id == dragId) {
       //   return index >= dragIndex ? index + 1 : index;
@@ -135,65 +134,65 @@ extension _DraggableDraggedDataExtension on DraggableDraggedData {
     return index;
   }
 
-  Object computeEffectiveId(Object id, int index) {
-    return id == dragIdentifier && index == dragIndex ? targetIdentifier : DraggableSpecialIdentifier.notDraggable;
+  ID computeEffectiveId(ID id, int index) {
+    return id == dragIdentifier && index == dragIndex ? targetIdentifier : id;
   }
 }
 
-extension _DragCompletionCallbackExtension on DragCompletionCallback {
-  void callWithData(DraggableDraggedData data) {
+extension _DragCompletionCallbackExtension<ID> on DragCompletionCallback<ID> {
+  void callWithData(DraggableDraggedData<ID> data) {
     return call(data.dragIdentifier, data.dragIndex, data.targetIdentifier, data.targetIndex);
   }
 }
 
-class DefaultDraggableController extends StatefulWidget {
+class DefaultDraggableController<ID> extends StatefulWidget {
   const DefaultDraggableController({
     super.key,
     required this.controller,
     required this.child,
   });
 
-  final DraggableController controller;
+  final DraggableController<ID> controller;
   final Widget? child;
 
-  static TransitionBuilder builder({
-    required DraggableController controller,
+  static TransitionBuilder builder<ID>({
+    required DraggableController<ID> controller,
     TransitionBuilder? builder,
   }) {
     return (context, child) {
-      child = DefaultDraggableController(controller: controller, child: child);
+      child = DefaultDraggableController<ID>(controller: controller, child: child);
       return builder == null ? child : builder(context, child);
     };
   }
 
-  static DraggableController? maybeOf(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<_DraggableControllerScope>()?.controller;
+  static DraggableController<ID>? maybeOf<ID>(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<_DraggableControllerScope<ID>>()?.controller;
   }
 
   @override
-  State<DefaultDraggableController> createState() => _DefaultDraggableControllerState();
+  State<DefaultDraggableController<ID>> createState() => _DefaultDraggableControllerState<ID>();
 }
 
-class _DefaultDraggableControllerState extends State<DefaultDraggableController> {
+class _DefaultDraggableControllerState<ID> extends State<DefaultDraggableController<ID>> {
   @override
   Widget build(BuildContext context) {
-    return _DraggableControllerScope(
+    return _DraggableControllerScope<ID>(
       controller: widget.controller,
       child: widget.child ?? const SizedBox(),
     );
   }
 }
 
-class _DraggableControllerScope extends InheritedWidget {
+class _DraggableControllerScope<ID> extends InheritedWidget {
   const _DraggableControllerScope({
     required this.controller,
     required super.child,
   });
 
-  final DraggableController controller;
+  final DraggableController<ID> controller;
 
   @override
-  bool updateShouldNotify(_DraggableControllerScope old) {
+  bool updateShouldNotify(_DraggableControllerScope<ID> old) {
     return controller != old.controller;
   }
 }

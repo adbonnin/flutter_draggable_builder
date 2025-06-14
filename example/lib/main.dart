@@ -30,7 +30,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var _colors = [Colors.red, Colors.yellow, Colors.green, Colors.blue];
 
-  late final DraggableController _controller;
+  late final DraggableController<int> _controller;
 
   @override
   void initState() {
@@ -50,7 +50,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: DraggableBuilder(
+      body: DraggableBuilder<int>(
+        identifier: 0,
         controller: _controller,
         itemBuilder: (_, index) => ColoredBox(color: _colors[index]),
         itemCount: _colors.length,

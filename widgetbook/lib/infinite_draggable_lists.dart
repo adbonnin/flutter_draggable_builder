@@ -2,6 +2,7 @@ import 'package:draggable_builder/draggable_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
+import 'package:widgetbook_workspace/models/item.dart';
 import 'package:widgetbook_workspace/utils/widget_book.dart';
 import 'package:widgetbook_workspace/widgets/info_label.dart';
 import 'package:widgetbook_workspace/widgets/list_view.dart';
@@ -22,10 +23,10 @@ class InfiniteDraggableListsUseCase extends StatefulWidget {
 }
 
 class _InfiniteDraggableListsUseCaseState extends State<InfiniteDraggableListsUseCase> {
-  late final DraggableController _controller;
+  late final DraggableController<String> _controller;
 
-  static const leftIdentifier = 0;
-  static const rightIdentifier = 1;
+  static const leftIdentifier = 'left';
+  static const rightIdentifier = 'right';
 
   final leftItems = InfiniteIndexedValueProvider(buildDefaultValueProvider(rgbColors));
   final rightItems = InfiniteIndexedValueProvider(buildDefaultValueProvider(cmyColors));
@@ -56,7 +57,7 @@ class _InfiniteDraggableListsUseCaseState extends State<InfiniteDraggableListsUs
             child: InfoLabel(
               labelText: "Left Draggable ListView",
               child: Expanded(
-                child: DraggableListView(
+                child: DraggableListView<String, Item>(
                   identifier: leftIdentifier,
                   isLongPress: context.knobs.isLongPress(),
                   controller: _controller,
@@ -78,7 +79,7 @@ class _InfiniteDraggableListsUseCaseState extends State<InfiniteDraggableListsUs
             child: InfoLabel(
               labelText: "Right Draggable ListView",
               child: Expanded(
-                child: DraggableListView(
+                child: DraggableListView<String, Item>(
                   identifier: rightIdentifier,
                   isLongPress: context.knobs.isLongPress(),
                   controller: _controller,
@@ -101,7 +102,7 @@ class _InfiniteDraggableListsUseCaseState extends State<InfiniteDraggableListsUs
     );
   }
 
-  void _onDragCompletion(Object dragId, int dragIndex, Object targetId, int targetIndex) {
+  void _onDragCompletion(String dragId, int dragIndex, String targetId, int targetIndex) {
     final dragColors = dragId == leftIdentifier ? leftItems : rightItems;
     final targetColors = targetId == leftIdentifier ? leftItems : rightItems;
 

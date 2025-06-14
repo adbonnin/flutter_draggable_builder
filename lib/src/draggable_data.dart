@@ -1,13 +1,13 @@
 import 'package:flutter/widgets.dart';
 import 'package:draggable_builder/src/draggable_builder.dart';
 
-class DraggableItemData {
+class DraggableItemData<ID> {
   const DraggableItemData({
     required this.dragIdentifier,
     required this.dragIndex,
   });
 
-  final Object dragIdentifier;
+  final ID dragIdentifier;
   final int dragIndex;
 
   @override
@@ -16,7 +16,7 @@ class DraggableItemData {
       return true;
     }
 
-    return other is DraggableItemData && //
+    return other is DraggableItemData<ID> && //
         runtimeType == other.runtimeType &&
         dragIdentifier == other.dragIdentifier &&
         dragIndex == other.dragIndex;
@@ -29,14 +29,14 @@ class DraggableItemData {
   }
 }
 
-class DraggableDragData extends DraggableItemData {
+class DraggableDragData<ID> extends DraggableItemData<ID> {
   const DraggableDragData({
     required super.dragIdentifier,
     required super.dragIndex,
     required this.placeholderBuilder,
   });
 
-  final PlaceholderWidgetBuilder placeholderBuilder;
+  final PlaceholderWidgetBuilder<ID> placeholderBuilder;
 
   @override
   bool operator ==(Object other) {
@@ -44,7 +44,7 @@ class DraggableDragData extends DraggableItemData {
       return true;
     }
 
-    return other is DraggableDragData && //
+    return other is DraggableDragData<ID> && //
         runtimeType == other.runtimeType &&
         dragIdentifier == other.dragIdentifier &&
         dragIndex == other.dragIndex &&
@@ -59,7 +59,7 @@ class DraggableDragData extends DraggableItemData {
   }
 }
 
-class DraggableDraggedData extends DraggableDragData {
+class DraggableDraggedData<ID> extends DraggableDragData<ID> {
   const DraggableDraggedData({
     required super.dragIdentifier,
     required super.dragIndex,
@@ -68,7 +68,7 @@ class DraggableDraggedData extends DraggableDragData {
     required this.targetIndex,
   });
 
-  final Object targetIdentifier;
+  final ID targetIdentifier;
   final int targetIndex;
 
   Widget buildPlaceholder(BuildContext context) {
@@ -81,7 +81,7 @@ class DraggableDraggedData extends DraggableDragData {
       return true;
     }
 
-    return other is DraggableDraggedData &&
+    return other is DraggableDraggedData<ID> &&
         runtimeType == other.runtimeType &&
         dragIdentifier == other.dragIdentifier &&
         dragIndex == other.dragIndex &&

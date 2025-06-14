@@ -2,6 +2,7 @@ import 'package:draggable_builder/draggable_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
+import 'package:widgetbook_workspace/models/item.dart';
 import 'package:widgetbook_workspace/utils/widget_book.dart';
 import 'package:widgetbook_workspace/widgets/grid_view.dart';
 import 'package:widgetbook_workspace/widgets/info_label.dart';
@@ -22,10 +23,10 @@ class MultipleDraggableGridsUseCase extends StatefulWidget {
 }
 
 class _MultipleDraggableGridsUseCaseState extends State<MultipleDraggableGridsUseCase> {
-  late final DraggableController _controller;
+  late final DraggableController<String> _controller;
 
-  static const topIdentifier = 0;
-  static const bottomIdentifier = 1;
+  static const topIdentifier = 'top';
+  static const bottomIdentifier = 'bottom';
 
   var _topItems = rgbColors.toItems();
   var _bottomItems = cmyColors.toItems();
@@ -47,60 +48,61 @@ class _MultipleDraggableGridsUseCaseState extends State<MultipleDraggableGridsUs
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.all(8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          spacing: 12,
-          children: [
-            InfoLabel(
-              labelText: "Top Draggable GridView",
-              child: DraggableGridView(
-                identifier: topIdentifier,
-                isLongPress: context.knobs.isLongPress(),
-                controller: _controller,
-                axis: context.knobs.axis(),
-                feedbackConstraintsSameAsItem: context.knobs.feedbackConstraintsSameAsItem(),
-                dragAnchorStrategy: context.knobs.dragAnchorStrategy(),
-                affinity: context.knobs.affinity(),
-                wrapWithDragTarget: context.knobs.wrapWithDragTarget(),
-                itemBuilder: itemBuilder,
-                itemWhenDraggingBuilder: context.knobs.itemWhenDraggingBuilder(),
-                feedbackBuilder: context.knobs.feedbackBuilder(),
-                placeholderBuilder: context.knobs.placeholderBuilder(),
-                emptyItemBuilder: context.knobs.emptyItemBuilder(),
-                itemCount: _topItems.length,
-                valueProvider: (i) => _topItems[i],
+    return DefaultDraggableController<String>(
+      controller: _controller,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 12,
+            children: [
+              InfoLabel(
+                labelText: "Top Draggable GridView",
+                child: DraggableGridView<String, Item>(
+                  identifier: topIdentifier,
+                  isLongPress: context.knobs.isLongPress(),
+                  axis: context.knobs.axis(),
+                  feedbackConstraintsSameAsItem: context.knobs.feedbackConstraintsSameAsItem(),
+                  dragAnchorStrategy: context.knobs.dragAnchorStrategy(),
+                  affinity: context.knobs.affinity(),
+                  wrapWithDragTarget: context.knobs.wrapWithDragTarget(),
+                  itemBuilder: itemBuilder,
+                  itemWhenDraggingBuilder: context.knobs.itemWhenDraggingBuilder(),
+                  feedbackBuilder: context.knobs.feedbackBuilder(),
+                  placeholderBuilder: context.knobs.placeholderBuilder(),
+                  emptyItemBuilder: context.knobs.emptyItemBuilder(),
+                  itemCount: _topItems.length,
+                  valueProvider: (i) => _topItems[i],
+                ),
               ),
-            ),
-            InfoLabel(
-              labelText: "Bottom Draggable GridView",
-              child: DraggableGridView(
-                identifier: bottomIdentifier,
-                isLongPress: context.knobs.isLongPress(),
-                controller: _controller,
-                axis: context.knobs.axis(),
-                feedbackConstraintsSameAsItem: context.knobs.feedbackConstraintsSameAsItem(),
-                dragAnchorStrategy: context.knobs.dragAnchorStrategy(),
-                affinity: context.knobs.affinity(),
-                wrapWithDragTarget: context.knobs.wrapWithDragTarget(),
-                itemBuilder: itemBuilder,
-                itemWhenDraggingBuilder: context.knobs.itemWhenDraggingBuilder(),
-                feedbackBuilder: context.knobs.feedbackBuilder(),
-                placeholderBuilder: context.knobs.placeholderBuilder(),
-                emptyItemBuilder: context.knobs.emptyItemBuilder(),
-                itemCount: _bottomItems.length,
-                valueProvider: (i) => _bottomItems[i],
+              InfoLabel(
+                labelText: "Bottom Draggable GridView",
+                child: DraggableGridView<String, Item>(
+                  identifier: bottomIdentifier,
+                  isLongPress: context.knobs.isLongPress(),
+                  axis: context.knobs.axis(),
+                  feedbackConstraintsSameAsItem: context.knobs.feedbackConstraintsSameAsItem(),
+                  dragAnchorStrategy: context.knobs.dragAnchorStrategy(),
+                  affinity: context.knobs.affinity(),
+                  wrapWithDragTarget: context.knobs.wrapWithDragTarget(),
+                  itemBuilder: itemBuilder,
+                  itemWhenDraggingBuilder: context.knobs.itemWhenDraggingBuilder(),
+                  feedbackBuilder: context.knobs.feedbackBuilder(),
+                  placeholderBuilder: context.knobs.placeholderBuilder(),
+                  emptyItemBuilder: context.knobs.emptyItemBuilder(),
+                  itemCount: _bottomItems.length,
+                  valueProvider: (i) => _bottomItems[i],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  void _onDragCompletion(Object dragId, int dragIndex, Object targetId, int targetIndex) {
+  void _onDragCompletion(String dragId, int dragIndex, String targetId, int targetIndex) {
     var newTopColors = [..._topItems];
     var newBottomColors = [..._bottomItems];
 

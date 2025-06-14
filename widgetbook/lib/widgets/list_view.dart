@@ -1,7 +1,7 @@
 import 'package:draggable_builder/draggable_builder.dart';
 import 'package:flutter/widgets.dart';
 
-class DraggableListView<T> extends StatelessWidget {
+class DraggableListView<ID, T> extends StatelessWidget {
   const DraggableListView({
     super.key,
     required this.identifier,
@@ -20,9 +20,9 @@ class DraggableListView<T> extends StatelessWidget {
     this.itemCount,
   });
 
-  final int identifier;
+  final ID identifier;
   final bool isLongPress;
-  final DraggableController? controller;
+  final DraggableController<ID>? controller;
   final Axis? axis;
   final bool feedbackConstraintsSameAsItem;
   final DragAnchorStrategy dragAnchorStrategy;
@@ -37,7 +37,7 @@ class DraggableListView<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DraggableBuilder(
+    return DraggableBuilder<ID>(
       identifier: identifier,
       isLongPress: isLongPress,
       controller: controller,
