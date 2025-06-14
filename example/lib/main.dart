@@ -28,17 +28,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var _colors = [Colors.red, Colors.yellow, Colors.green, Colors.blue];
+  var _colors = <Color>[Colors.red, Colors.yellow, Colors.green, Colors.blue];
 
-  late final DraggableController<int> _controller;
+  late final DraggableController<String, Color> _controller;
 
   @override
   void initState() {
     super.initState();
-
-    _controller = DraggableController(
-      onDragCompletion: _onDragCompletion,
-    );
+    _controller = DraggableController(onDragCompletion: _onDragCompletion);
   }
 
   @override
@@ -50,11 +47,12 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: DraggableBuilder<int>(
-        identifier: 0,
+      body: DraggableBuilder<String, Color>(
+        identifier: 'id',
         controller: _controller,
-        itemBuilder: (_, index) => ColoredBox(color: _colors[index]),
+        itemBuilder: (_, __, value) => ColoredBox(color: value),
         itemCount: _colors.length,
+        valueProvider: ((index) => _colors[index]),
         builder: (_, itemBuilder, itemCount) => GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 4,
@@ -68,11 +66,10 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _onDragCompletion(
-      Object dragId, int dragIndex, Object targetId, int targetIndex) {
+  void _onDragCompletion(DraggedDetails<String, Color> data) {
     final newColors = [..._colors] //
-      ..removeAt(dragIndex)
-      ..insert(targetIndex, _colors[dragIndex]);
+      ..removeAt(data.dragIndex)
+      ..insert(data.targetIndex, data.dragValue);
 
     setState(() {
       _colors = newColors;

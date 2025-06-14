@@ -1,21 +1,20 @@
 import 'package:draggable_builder/src/draggable_controller.dart';
 import 'package:draggable_builder/src/draggable_data.dart';
+import 'package:draggable_builder/src/draggable_utils.dart';
 import 'package:flutter/widgets.dart';
 
-typedef ScrollableBuilder = Widget Function(
+typedef ContainerBuilder = Widget Function(
   BuildContext context,
   NullableIndexedWidgetBuilder itemBuilder,
   int? itemCount,
 );
 
-typedef PlaceholderWidgetBuilder<ID> = Widget Function(
+typedef PlaceholderWidgetBuilder<ID, T> = Widget Function(
   BuildContext context,
-  int dragIndex,
-  ID targetId,
-  int targetIndex,
+  DraggedDetails dragged,
 );
 
-class DraggableBuilder<ID> extends StatefulWidget {
+class DraggableBuilder<ID, T> extends StatefulWidget {
   const DraggableBuilder({
     super.key,
     required this.identifier,
@@ -33,35 +32,37 @@ class DraggableBuilder<ID> extends StatefulWidget {
     this.placeholderBuilder,
     this.emptyItemBuilder,
     this.itemCount,
+    required this.valueProvider,
     required this.builder,
   });
 
   final ID identifier;
   final bool isLongPress;
-  final DraggableController<ID>? controller;
+  final DraggableController<ID, T>? controller;
   final Axis? axis;
   final Offset feedbackOffset;
   final bool feedbackConstraintsSameAsItem;
   final DragAnchorStrategy dragAnchorStrategy;
   final Axis? affinity;
   final bool wrapWithDragTarget;
-  final IndexedWidgetBuilder itemBuilder;
-  final IndexedWidgetBuilder? itemWhenDraggingBuilder;
-  final NullableIndexedWidgetBuilder? feedbackBuilder;
-  final PlaceholderWidgetBuilder? placeholderBuilder;
+  final IndexedValueWidgetBuilder<T> itemBuilder;
+  final IndexedValueWidgetBuilder<T>? itemWhenDraggingBuilder;
+  final NullableIndexedValueWidgetBuilder<T>? feedbackBuilder;
+  final PlaceholderWidgetBuilder<ID, T>? placeholderBuilder;
   final WidgetBuilder? emptyItemBuilder;
   final int? itemCount;
-  final ScrollableBuilder builder;
+  final IndexedValueProvider<T> valueProvider;
+  final ContainerBuilder builder;
 
   @override
-  State<DraggableBuilder<ID>> createState() => _DraggableBuilderState<ID>();
+  State<DraggableBuilder<ID, T>> createState() => _DraggableBuilderState<ID, T>();
 }
 
-class _DraggableBuilderState<ID> extends State<DraggableBuilder<ID>> {
-  DraggableController<ID>? _controller;
+class _DraggableBuilderState<ID, T> extends State<DraggableBuilder<ID, T>> {
+  DraggableController<ID, T>? _controller;
 
   void _updateDraggableController() {
-    final newController = widget.controller ?? DefaultDraggableController.maybeOf<ID>(context);
+    final newController = widget.controller ?? DefaultDraggableController.maybeOf<ID, T>(context);
 
     assert(() {
       if (newController == null) {
@@ -90,7 +91,7 @@ class _DraggableBuilderState<ID> extends State<DraggableBuilder<ID>> {
   }
 
   @override
-  void didUpdateWidget(DraggableBuilder<ID> oldWidget) {
+  void didUpdateWidget(DraggableBuilder<ID, T> oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (widget.controller != oldWidget.controller) {
@@ -108,8 +109,8 @@ class _DraggableBuilderState<ID> extends State<DraggableBuilder<ID>> {
     if (widget.wrapWithDragTarget) {
       final child = effectiveChild;
 
-      effectiveChild = DragTarget<DraggableDragData<ID>>(
-        onMove: (details) => _onDragTargetMove(details, null),
+      effectiveChild = DragTarget<DragDetails<ID, T>>(
+        onMove: (details) => _onDragTargetMove(details, null, null),
         builder: (_, __, ___) => child,
       );
     }
@@ -120,32 +121,41 @@ class _DraggableBuilderState<ID> extends State<DraggableBuilder<ID>> {
   Widget? _buildItem(BuildContext context, int index) {
     final item = _controller!.computeItem(widget.identifier, index);
 
-    if (item is DraggableDraggedData<ID>) {
+    if (item is DraggedDetails<ID, T>) {
       return item.buildPlaceholder(context);
     }
 
-    DragTargetBuilder<DraggableDragData<ID>> itemBuilder;
+    T? dragValue;
+    DragTargetBuilder<DragDetails<ID, T>> itemBuilder;
 
     if (_shouldDisplayEmptyItem) {
+      dragValue = null;
       itemBuilder = (context, __, ___) => widget.emptyItemBuilder?.call(context) ?? const SizedBox();
     } //
     else if (!widget.feedbackConstraintsSameAsItem) {
-      itemBuilder = (context, __, ___) => _buildDraggable(context, item);
+      dragValue = widget.valueProvider(item.dragIndex);
+      itemBuilder = (context, __, ___) => _buildDraggable(context, item, dragValue as T);
     } //
     else {
+      dragValue = widget.valueProvider(item.dragIndex);
       itemBuilder = (_, __, ___) => LayoutBuilder(
-        builder: (context, constraints) => _buildDraggable(context, item, constraints),
-      );
+            builder: (context, constraints) => _buildDraggable(context, item, dragValue as T, constraints),
+          );
     }
 
-    return DragTarget<DraggableDragData<ID>>(
-      onMove: (details) => _onDragTargetMove(details, index),
+    return DragTarget<DragDetails<ID, T>>(
+      onMove: (details) => _onDragTargetMove(details, index, dragValue),
       builder: itemBuilder,
     );
   }
 
-  Widget _buildDraggable(BuildContext context, DraggableItemData<ID> item, [BoxConstraints? constraints]) {
-    final IndexedWidgetBuilder itemBuilder;
+  Widget _buildDraggable(
+    BuildContext context,
+    TargetDetails<ID, T> item,
+    T dragValue, [
+    BoxConstraints? constraints,
+  ]) {
+    final IndexedValueWidgetBuilder<T> itemBuilder;
 
     if (item.dragIdentifier == widget.identifier) {
       itemBuilder = widget.itemBuilder;
@@ -154,8 +164,8 @@ class _DraggableBuilderState<ID> extends State<DraggableBuilder<ID>> {
       itemBuilder = widget.itemWhenDraggingBuilder ?? widget.itemBuilder;
     }
 
-    var effectiveChild = itemBuilder(context, item.dragIndex);
-    var effectiveFeedback = widget.feedbackBuilder?.call(context, item.dragIndex) ?? effectiveChild;
+    var effectiveChild = itemBuilder(context, item.dragIndex, dragValue);
+    var effectiveFeedback = widget.feedbackBuilder?.call(context, item.dragIndex, dragValue) ?? effectiveChild;
 
     if (constraints != null) {
       effectiveFeedback = ConstrainedBox(
@@ -164,14 +174,15 @@ class _DraggableBuilderState<ID> extends State<DraggableBuilder<ID>> {
       );
     }
 
-    final data = DraggableDragData<ID>(
+    final data = DragDetails<ID, T>(
       dragIdentifier: widget.identifier,
       dragIndex: item.dragIndex,
-      placeholderBuilder: widget.placeholderBuilder ?? (c, i, ___, ____) => widget.itemBuilder(c, i),
+      dragValue: dragValue,
+      placeholderBuilder: widget.placeholderBuilder ?? (c, d) => widget.itemBuilder(c, d.dragIndex, d.dragValue),
     );
 
     if (widget.isLongPress) {
-      effectiveChild = LongPressDraggable<DraggableDragData>(
+      effectiveChild = LongPressDraggable<DragDetails>(
         data: data,
         axis: widget.axis,
         feedbackOffset: widget.feedbackOffset,
@@ -183,7 +194,7 @@ class _DraggableBuilderState<ID> extends State<DraggableBuilder<ID>> {
       );
     } //
     else {
-      effectiveChild = Draggable<DraggableDragData>(
+      effectiveChild = Draggable<DragDetails>(
         data: data,
         axis: widget.axis,
         feedbackOffset: widget.feedbackOffset,
@@ -211,8 +222,8 @@ class _DraggableBuilderState<ID> extends State<DraggableBuilder<ID>> {
     return _controller!.computeItemCount(widget.identifier, widget.itemCount);
   }
 
-  void _onDragTargetMove(DragTargetDetails<DraggableDragData<ID>> details, int? targetIndex) {
-    _controller!.onDragTargetMove(details.data, widget.identifier, targetIndex, widget.itemCount);
+  void _onDragTargetMove(DragTargetDetails<DragDetails<ID, T>> details, int? targetIndex, T? targetValue) {
+    _controller!.onDragTargetMove(details.data, widget.identifier, targetIndex, targetValue, widget.itemCount);
   }
 
   void _onDragEnd(DraggableDetails details) {

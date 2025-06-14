@@ -23,7 +23,7 @@ class MultipleDraggableGridsUseCase extends StatefulWidget {
 }
 
 class _MultipleDraggableGridsUseCaseState extends State<MultipleDraggableGridsUseCase> {
-  late final DraggableController<String> _controller;
+  late final DraggableController<String, Item> _controller;
 
   static const topIdentifier = 'top';
   static const bottomIdentifier = 'bottom';
@@ -34,10 +34,7 @@ class _MultipleDraggableGridsUseCaseState extends State<MultipleDraggableGridsUs
   @override
   void initState() {
     super.initState();
-
-    _controller = DraggableController(
-      onDragCompletion: _onDragCompletion,
-    );
+    _controller = DraggableController(onDragCompletion: _onDragCompletion);
   }
 
   @override
@@ -48,7 +45,7 @@ class _MultipleDraggableGridsUseCaseState extends State<MultipleDraggableGridsUs
 
   @override
   Widget build(BuildContext context) {
-    return DefaultDraggableController<String>(
+    return DefaultDraggableController<String, Item>(
       controller: _controller,
       child: SingleChildScrollView(
         child: Padding(
@@ -102,15 +99,15 @@ class _MultipleDraggableGridsUseCaseState extends State<MultipleDraggableGridsUs
     );
   }
 
-  void _onDragCompletion(String dragId, int dragIndex, String targetId, int targetIndex) {
+  void _onDragCompletion(DraggedDetails<String, Item> data) {
     var newTopColors = [..._topItems];
     var newBottomColors = [..._bottomItems];
 
-    final dragColors = dragId == topIdentifier ? newTopColors : newBottomColors;
-    final targetColors = targetId == topIdentifier ? newTopColors : newBottomColors;
+    final dragColors = data.dragIdentifier == topIdentifier ? newTopColors : newBottomColors;
+    final targetColors = data.targetIdentifier == topIdentifier ? newTopColors : newBottomColors;
 
-    final color = dragColors.removeAt(dragIndex);
-    targetColors.insert(targetIndex, color);
+    dragColors.removeAt(data.dragIndex);
+    targetColors.insert(data.targetIndex, data.dragValue);
 
     setState(() {
       _topItems = newTopColors;

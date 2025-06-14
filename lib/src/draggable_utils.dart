@@ -1,4 +1,10 @@
+import 'package:flutter/widgets.dart';
+
 typedef IndexedValueProvider<T> = T Function(int index);
+
+typedef IndexedValueWidgetBuilder<T> = Widget Function(BuildContext context, int index, T value);
+
+typedef NullableIndexedValueWidgetBuilder<T> = Widget? Function(BuildContext context, int index, T value);
 
 class InfiniteIndexedValueProvider<T> extends Iterable<T> {
   InfiniteIndexedValueProvider(this.defaultValueProvider);

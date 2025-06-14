@@ -60,8 +60,9 @@ class _MyHomePageState extends State<MyHomePage> {
       return Scaffold(
          body: DraggableBuilder(
             controller: _controller,
-            itemBuilder: (_, index) => ColoredBox(color: _colors[index]),
-            itemCount: _colors.length,
+            itemBuilder: (_, __, color) => ColoredBox(color: color),
+            itemCount: _colors.length, 
+            valueProvider: (index) => _colors[index],
             builder: (_, itemBuilder, itemCount) => GridView.builder(
                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 4,

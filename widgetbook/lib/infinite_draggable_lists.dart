@@ -23,7 +23,7 @@ class InfiniteDraggableListsUseCase extends StatefulWidget {
 }
 
 class _InfiniteDraggableListsUseCaseState extends State<InfiniteDraggableListsUseCase> {
-  late final DraggableController<String> _controller;
+  late final DraggableController<String, Item> _controller;
 
   static const leftIdentifier = 'left';
   static const rightIdentifier = 'right';
@@ -34,10 +34,7 @@ class _InfiniteDraggableListsUseCaseState extends State<InfiniteDraggableListsUs
   @override
   void initState() {
     super.initState();
-
-    _controller = DraggableController(
-      onDragCompletion: _onDragCompletion,
-    );
+    _controller = DraggableController(onDragCompletion: _onDragCompletion);
   }
 
   @override
@@ -102,12 +99,12 @@ class _InfiniteDraggableListsUseCaseState extends State<InfiniteDraggableListsUs
     );
   }
 
-  void _onDragCompletion(String dragId, int dragIndex, String targetId, int targetIndex) {
-    final dragColors = dragId == leftIdentifier ? leftItems : rightItems;
-    final targetColors = targetId == leftIdentifier ? leftItems : rightItems;
+  void _onDragCompletion(DraggedDetails<String, Item> data) {
+    final dragColors = data.dragIdentifier == leftIdentifier ? leftItems : rightItems;
+    final targetColors = data.targetIdentifier == leftIdentifier ? leftItems : rightItems;
 
-    final color = dragColors.removeAt(dragIndex);
-    targetColors.insertAt(targetIndex, color);
+    dragColors.removeAt(data.dragIndex);
+    targetColors.insertAt(data.targetIndex, data.dragValue);
 
     setState(() {});
   }

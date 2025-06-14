@@ -23,7 +23,7 @@ class DraggableGridView<ID, T> extends StatelessWidget {
 
   final ID identifier;
   final bool isLongPress;
-  final DraggableController<ID>? controller;
+  final DraggableController<ID, T>? controller;
   final Axis? axis;
   final bool feedbackConstraintsSameAsItem;
   final DragAnchorStrategy dragAnchorStrategy;
@@ -39,7 +39,7 @@ class DraggableGridView<ID, T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DraggableBuilder<ID>(
+    return DraggableBuilder<ID, T>(
       identifier: identifier,
       isLongPress: isLongPress,
       controller: controller,
@@ -48,12 +48,13 @@ class DraggableGridView<ID, T> extends StatelessWidget {
       dragAnchorStrategy: dragAnchorStrategy,
       affinity: affinity,
       wrapWithDragTarget: wrapWithDragTarget,
-      itemBuilder: (c, i) => itemBuilder(c, valueProvider(i)),
-      itemWhenDraggingBuilder: itemWhenDraggingBuilder == null ? null : (c, i) => itemWhenDraggingBuilder!(c, valueProvider(i)),
-      feedbackBuilder: feedbackBuilder == null ? null : (c, i) => feedbackBuilder!(c, valueProvider(i)),
-      placeholderBuilder: placeholderBuilder == null ? null : (c, i, _, __) => placeholderBuilder!(c, valueProvider(i)),
+      itemBuilder: (c, i, v) => itemBuilder(c, v),
+      itemWhenDraggingBuilder: itemWhenDraggingBuilder == null ? null : (c, i, v) => itemWhenDraggingBuilder!(c, v),
+      feedbackBuilder: feedbackBuilder == null ? null : (c, i, v) => feedbackBuilder!(c, v),
+      placeholderBuilder: placeholderBuilder == null ? null : (c, d) => placeholderBuilder!(c, d.dragValue),
       emptyItemBuilder: emptyItemBuilder,
       itemCount: itemCount,
+      valueProvider: valueProvider,
       builder: (_, itemBuilder, itemCount) => MyGridView(
         itemBuilder: itemBuilder,
         itemCount: itemCount,

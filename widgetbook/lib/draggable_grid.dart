@@ -22,17 +22,14 @@ class DraggableGridUseCase extends StatefulWidget {
 }
 
 class _DraggableGridUseCaseState extends State<DraggableGridUseCase> {
-  late final DraggableController<String> _controller;
+  late final DraggableController<String, Item> _controller;
 
   var _items = rgbColors.toItems();
 
   @override
   void initState() {
     super.initState();
-
-    _controller = DraggableController(
-      onDragCompletion: _onDragCompletion,
-    );
+    _controller = DraggableController(onDragCompletion: _onDragCompletion);
   }
 
   @override
@@ -64,12 +61,10 @@ class _DraggableGridUseCaseState extends State<DraggableGridUseCase> {
     );
   }
 
-  void _onDragCompletion(String dragId, int dragIndex, String targetId, int targetIndex) {
-    final color = _items[dragIndex];
-
+  void _onDragCompletion(DraggedDetails<String, Item> data) {
     final newColors = [..._items] //
-      ..removeAt(dragIndex)
-      ..insert(targetIndex, color);
+      ..removeAt(data.dragIndex)
+      ..insert(data.targetIndex, data.dragValue);
 
     setState(() {
       _items = newColors;

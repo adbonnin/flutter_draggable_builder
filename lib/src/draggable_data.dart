@@ -1,8 +1,8 @@
-import 'package:flutter/widgets.dart';
 import 'package:draggable_builder/src/draggable_builder.dart';
+import 'package:flutter/widgets.dart';
 
-class DraggableItemData<ID> {
-  const DraggableItemData({
+class TargetDetails<ID, T> {
+  const TargetDetails({
     required this.dragIdentifier,
     required this.dragIndex,
   });
@@ -16,7 +16,7 @@ class DraggableItemData<ID> {
       return true;
     }
 
-    return other is DraggableItemData<ID> && //
+    return other is TargetDetails<ID, T> && //
         runtimeType == other.runtimeType &&
         dragIdentifier == other.dragIdentifier &&
         dragIndex == other.dragIndex;
@@ -29,14 +29,16 @@ class DraggableItemData<ID> {
   }
 }
 
-class DraggableDragData<ID> extends DraggableItemData<ID> {
-  const DraggableDragData({
+class DragDetails<ID, T> extends TargetDetails<ID, T> {
+  const DragDetails({
     required super.dragIdentifier,
     required super.dragIndex,
+    required this.dragValue,
     required this.placeholderBuilder,
   });
 
-  final PlaceholderWidgetBuilder<ID> placeholderBuilder;
+  final T dragValue;
+  final PlaceholderWidgetBuilder<ID, T> placeholderBuilder;
 
   @override
   bool operator ==(Object other) {
@@ -44,10 +46,11 @@ class DraggableDragData<ID> extends DraggableItemData<ID> {
       return true;
     }
 
-    return other is DraggableDragData<ID> && //
+    return other is DragDetails<ID, T> && //
         runtimeType == other.runtimeType &&
         dragIdentifier == other.dragIdentifier &&
         dragIndex == other.dragIndex &&
+        dragValue == other.dragValue &&
         placeholderBuilder == other.placeholderBuilder;
   }
 
@@ -55,24 +58,28 @@ class DraggableDragData<ID> extends DraggableItemData<ID> {
   int get hashCode {
     return dragIdentifier.hashCode ^ //
         dragIndex.hashCode ^
+        dragValue.hashCode ^
         placeholderBuilder.hashCode;
   }
 }
 
-class DraggableDraggedData<ID> extends DraggableDragData<ID> {
-  const DraggableDraggedData({
+class DraggedDetails<ID, T> extends DragDetails<ID, T> {
+  const DraggedDetails({
     required super.dragIdentifier,
     required super.dragIndex,
+    required super.dragValue,
     required super.placeholderBuilder,
     required this.targetIdentifier,
     required this.targetIndex,
+    required this.targetValue,
   });
 
   final ID targetIdentifier;
   final int targetIndex;
+  final T? targetValue;
 
   Widget buildPlaceholder(BuildContext context) {
-    return placeholderBuilder.call(context, dragIndex, targetIdentifier, targetIndex);
+    return placeholderBuilder.call(context, this);
   }
 
   @override
@@ -81,7 +88,7 @@ class DraggableDraggedData<ID> extends DraggableDragData<ID> {
       return true;
     }
 
-    return other is DraggableDraggedData<ID> &&
+    return other is DraggedDetails<ID, T> &&
         runtimeType == other.runtimeType &&
         dragIdentifier == other.dragIdentifier &&
         dragIndex == other.dragIndex &&
