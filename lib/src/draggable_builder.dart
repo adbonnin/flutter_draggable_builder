@@ -27,6 +27,7 @@ class DraggableBuilder extends StatefulWidget {
     this.feedbackConstraintsSameAsItem = true,
     this.dragAnchorStrategy = childDragAnchorStrategy,
     this.affinity,
+    this.wrapWithDragTarget = false,
     required this.itemBuilder,
     this.itemWhenDraggingBuilder,
     this.feedbackBuilder,
@@ -44,6 +45,7 @@ class DraggableBuilder extends StatefulWidget {
   final bool feedbackConstraintsSameAsItem;
   final DragAnchorStrategy dragAnchorStrategy;
   final Axis? affinity;
+  final bool wrapWithDragTarget;
   final IndexedWidgetBuilder itemBuilder;
   final IndexedWidgetBuilder? itemWhenDraggingBuilder;
   final NullableIndexedWidgetBuilder? feedbackBuilder;
@@ -99,15 +101,21 @@ class _DraggableBuilderState extends State<DraggableBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    final child = ListenableBuilder(
+    Widget effectiveChild = ListenableBuilder(
       listenable: _controller!,
       builder: (context, _) => widget.builder(context, _buildItem, _itemCount),
     );
 
-    return DragTarget<DraggableDragData>(
-      onMove: (details) => _onDragTargetMove(details, null),
-      builder: (_, __, ___) => child,
-    );
+    if (widget.wrapWithDragTarget) {
+      final child = effectiveChild;
+
+      effectiveChild = DragTarget<DraggableDragData>(
+        onMove: (details) => _onDragTargetMove(details, null),
+        builder: (_, __, ___) => child,
+      );
+    }
+
+    return effectiveChild;
   }
 
   Widget? _buildItem(BuildContext context, int index) {
@@ -117,21 +125,23 @@ class _DraggableBuilderState extends State<DraggableBuilder> {
       return item.buildPlaceholder(context);
     }
 
+    DragTargetBuilder<DraggableDragData> itemBuilder;
+
     if (_shouldDisplayEmptyItem) {
-      return widget.emptyItemBuilder?.call(context) ?? const SizedBox();
+      itemBuilder = (context, __, ___) => widget.emptyItemBuilder?.call(context) ?? const SizedBox();
+    } //
+    else if (!widget.feedbackConstraintsSameAsItem) {
+      itemBuilder = (context, __, ___) => _buildDraggable(context, item);
+    } //
+    else {
+      itemBuilder = (_, __, ___) => LayoutBuilder(
+        builder: (context, constraints) => _buildDraggable(context, item, constraints),
+      );
     }
 
     return DragTarget<DraggableDragData>(
       onMove: (details) => _onDragTargetMove(details, index),
-      builder: (context, __, ___) {
-        if (!widget.feedbackConstraintsSameAsItem) {
-          return _buildDraggable(context, item);
-        }
-
-        return LayoutBuilder(
-          builder: (context, constraints) => _buildDraggable(context, item, constraints),
-        );
-      },
+      builder: itemBuilder,
     );
   }
 
@@ -211,6 +221,6 @@ class _DraggableBuilderState extends State<DraggableBuilder> {
   }
 
   void _onDragEnd(DraggableDetails details) {
-    _controller!.onDragEnd(details.wasAccepted);
+    _controller!.onDragEnd();
   }
 }

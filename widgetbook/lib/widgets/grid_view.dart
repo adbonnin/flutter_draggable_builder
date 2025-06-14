@@ -11,6 +11,7 @@ class DraggableGridView<T> extends StatelessWidget {
     this.feedbackConstraintsSameAsItem = true,
     this.dragAnchorStrategy = childDragAnchorStrategy,
     this.affinity,
+    this.wrapWithDragTarget = false,
     required this.itemBuilder,
     this.itemWhenDraggingBuilder,
     this.feedbackBuilder,
@@ -27,6 +28,7 @@ class DraggableGridView<T> extends StatelessWidget {
   final bool feedbackConstraintsSameAsItem;
   final DragAnchorStrategy dragAnchorStrategy;
   final Axis? affinity;
+  final bool wrapWithDragTarget;
   final Widget Function(BuildContext context, T value) itemBuilder;
   final Widget Function(BuildContext context, T value)? itemWhenDraggingBuilder;
   final Widget Function(BuildContext context, T value)? feedbackBuilder;
@@ -45,6 +47,7 @@ class DraggableGridView<T> extends StatelessWidget {
       feedbackConstraintsSameAsItem: feedbackConstraintsSameAsItem,
       dragAnchorStrategy: dragAnchorStrategy,
       affinity: affinity,
+      wrapWithDragTarget: wrapWithDragTarget,
       itemBuilder: (c, i) => itemBuilder(c, valueProvider(i)),
       itemWhenDraggingBuilder: itemWhenDraggingBuilder == null ? null : (c, i) => itemWhenDraggingBuilder!(c, valueProvider(i)),
       feedbackBuilder: feedbackBuilder == null ? null : (c, i) => feedbackBuilder!(c, valueProvider(i)),

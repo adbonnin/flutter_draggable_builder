@@ -1,10 +1,10 @@
+import 'package:draggable_builder/draggable_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_workspace/models/item.dart';
 import 'package:widgetbook_workspace/utils/axis_knob.dart';
 import 'package:widgetbook_workspace/utils/drag_anchor_strategy_knob.dart';
 import 'package:widgetbook_workspace/widgets/item_box.dart';
-import 'package:draggable_builder/draggable_builder.dart';
 
 final rgbColors = [Colors.red, Colors.green, Colors.blue, Colors.white];
 final cmyColors = [Colors.cyan, Colors.pink, Colors.yellow, Colors.black];
@@ -76,6 +76,13 @@ extension KnobsBuilderExtension on KnobsBuilder {
         label: 'affinity',
         initialValue: null,
       ),
+    );
+  }
+
+  bool wrapWithDragTarget() {
+    return boolean(
+      label: 'wrap with DragTarget',
+      initialValue: false,
     );
   }
 

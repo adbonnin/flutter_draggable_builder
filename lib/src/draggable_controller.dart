@@ -79,8 +79,8 @@ class DraggableController with ChangeNotifier {
     notifyListeners();
   }
 
-  void onDragEnd(bool wasAccepted) {
-    if (_data is DraggableDraggedData && wasAccepted) {
+  void onDragEnd() {
+    if (_data is DraggableDraggedData) {
       onDragCompletion?.callWithData(_data!);
     }
 

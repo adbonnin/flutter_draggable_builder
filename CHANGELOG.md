@@ -1,5 +1,7 @@
 ## 1.0.0
 
+* Feature: Add wrapWithDragTarget property
+
 ## 0.0.2
 
 * Refactor: Renamed `id` to `identifier` in `DraggableBuilder` for clarity and consistency.
