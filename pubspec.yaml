@@ -1,6 +1,6 @@
 name: draggable_builder
 description: Add draggable item support to dynamically built scrollable containers like GridView and ListView in Flutter.
-version: 1.0.1
+version: 1.0.2
 
 repository: https://github.com/adbonnin/flutter_draggable_builder
 issue_tracker: https://github.com/adbonnin/flutter_draggable_builder/issues
