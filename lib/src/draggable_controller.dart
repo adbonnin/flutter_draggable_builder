@@ -1,4 +1,5 @@
 import 'package:draggable_builder/src/draggable_data.dart';
+import 'package:draggable_builder/src/draggable_utils.dart';
 import 'package:flutter/widgets.dart';
 
 typedef DragCompletionCallback<ID, T> = void Function(DraggedDetails<ID, T> dragged);
@@ -50,25 +51,20 @@ class DraggableController<ID, T> with ChangeNotifier {
   void onDragTargetMove(
     DragDetails<ID, T> drag,
     ID targetIdentifier,
-    int? targetIndex,
-    T? targetValue,
+    int targetIndex,
     int? targetCount,
+    IndexedValueProvider targetValueProvider,
   ) {
-    if (targetIndex == null) {
-      if (drag.dragIdentifier == targetIdentifier) {
-        return;
-      }
+    final isSameDrag = _data?.dragIdentifier == drag.dragIdentifier && //
+        _data?.dragIndex == drag.dragIndex &&
+        _data?.targetIdentifier == targetIdentifier &&
+        _data?.targetIndex == targetIndex;
 
-      final isSameDrag = _data?.dragIdentifier == drag.dragIdentifier && //
-          _data?.dragIndex == drag.dragIndex &&
-          _data?.targetIdentifier == targetIdentifier;
-
-      if (isSameDrag) {
-        return;
-      }
-
-      targetIndex = targetCount ?? 0;
+    if (isSameDrag) {
+      return;
     }
+
+    final targetValue = targetCount != null && targetIndex >= targetCount ? null : targetValueProvider(targetIndex);
 
     final data = DraggedDetails<ID, T>(
       dragIdentifier: drag.dragIdentifier,
@@ -79,10 +75,6 @@ class DraggableController<ID, T> with ChangeNotifier {
       targetIndex: targetIndex,
       targetValue: targetValue,
     );
-
-    if (_data == data) {
-      return;
-    }
 
     _data = data;
     notifyListeners();

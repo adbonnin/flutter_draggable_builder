@@ -94,7 +94,8 @@ class DraggedDetails<ID, T> extends DragDetails<ID, T> {
         dragIndex == other.dragIndex &&
         placeholderBuilder == other.placeholderBuilder &&
         targetIdentifier == other.targetIdentifier &&
-        targetIndex == other.targetIndex;
+        targetIndex == other.targetIndex &&
+        targetValue == other.targetValue;
   }
 
   @override
@@ -103,6 +104,7 @@ class DraggedDetails<ID, T> extends DragDetails<ID, T> {
         dragIndex.hashCode ^
         placeholderBuilder.hashCode ^
         targetIdentifier.hashCode ^
-        targetIndex.hashCode;
+        targetIndex.hashCode ^
+        targetValue.hashCode;
   }
 }

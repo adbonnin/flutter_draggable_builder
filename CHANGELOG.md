@@ -1,5 +1,7 @@
 ## 1.0.1
 
+* Fix: Correct returned targetValue in DraggedDetails on drop
+
 ## 1.0.0
 
 * Feature: Add wrapWithDragTarget property

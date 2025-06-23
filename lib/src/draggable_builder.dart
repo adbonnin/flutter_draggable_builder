@@ -11,7 +11,7 @@ typedef ContainerBuilder = Widget Function(
 
 typedef PlaceholderWidgetBuilder<ID, T> = Widget Function(
   BuildContext context,
-  DraggedDetails dragged,
+  DraggedDetails<ID, T> dragged,
 );
 
 class DraggableBuilder<ID, T> extends StatefulWidget {
@@ -110,7 +110,7 @@ class _DraggableBuilderState<ID, T> extends State<DraggableBuilder<ID, T>> {
       final child = effectiveChild;
 
       effectiveChild = DragTarget<DragDetails<ID, T>>(
-        onMove: (details) => _onDragTargetMove(details, null, null),
+        onMove: (details) => _onDragTargetMove(details, 0),
         builder: (_, __, ___) => child,
       );
     }
@@ -144,7 +144,7 @@ class _DraggableBuilderState<ID, T> extends State<DraggableBuilder<ID, T>> {
     }
 
     return DragTarget<DragDetails<ID, T>>(
-      onMove: (details) => _onDragTargetMove(details, index, dragValue),
+      onMove: (details) => _onDragTargetMove(details, index),
       builder: itemBuilder,
     );
   }
@@ -222,8 +222,8 @@ class _DraggableBuilderState<ID, T> extends State<DraggableBuilder<ID, T>> {
     return _controller!.computeItemCount(widget.identifier, widget.itemCount);
   }
 
-  void _onDragTargetMove(DragTargetDetails<DragDetails<ID, T>> details, int? targetIndex, T? targetValue) {
-    _controller!.onDragTargetMove(details.data, widget.identifier, targetIndex, targetValue, widget.itemCount);
+  void _onDragTargetMove(DragTargetDetails<DragDetails<ID, T>> details, int targetIndex) {
+    _controller!.onDragTargetMove(details.data, widget.identifier, targetIndex, widget.itemCount, widget.valueProvider);
   }
 
   void _onDragEnd(DraggableDetails details) {
