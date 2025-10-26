@@ -1,3 +1,5 @@
+## 1.0.3
+
 ## 1.0.2
 
 * Fix: Resolve layout bug with wrapWithDragTarget
