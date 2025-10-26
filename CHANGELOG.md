@@ -1,5 +1,7 @@
 ## 1.0.2
 
+* Fix: Resolve layout bug with wrapWithDragTarget
+
 ## 1.0.1
 
 * Fix: Correct returned targetValue in DraggedDetails on drop

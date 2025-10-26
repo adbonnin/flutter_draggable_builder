@@ -51,16 +51,23 @@ class DraggableController<ID, T> with ChangeNotifier {
   void onDragTargetMove(
     DragDetails<ID, T> drag,
     ID targetIdentifier,
-    int targetIndex,
+    int? targetIndex,
     int? targetCount,
     IndexedValueProvider targetValueProvider,
   ) {
     final isSameDrag = _data?.dragIdentifier == drag.dragIdentifier && //
         _data?.dragIndex == drag.dragIndex &&
-        _data?.targetIdentifier == targetIdentifier &&
-        _data?.targetIndex == targetIndex;
+        _data?.targetIdentifier == targetIdentifier;
 
-    if (isSameDrag) {
+    if (targetIndex == null) {
+      if (isSameDrag) {
+        return;
+      }
+
+      targetIndex = targetCount ?? 0;
+    }
+
+    if (isSameDrag && _data?.targetIndex == targetIndex) {
       return;
     }
 

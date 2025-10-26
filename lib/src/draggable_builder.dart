@@ -110,7 +110,7 @@ class _DraggableBuilderState<ID, T> extends State<DraggableBuilder<ID, T>> {
       final child = effectiveChild;
 
       effectiveChild = DragTarget<DragDetails<ID, T>>(
-        onMove: (details) => _onDragTargetMove(details, 0),
+        onMove: (details) => _onDragTargetMove(details, null),
         builder: (_, __, ___) => child,
       );
     }
@@ -139,8 +139,8 @@ class _DraggableBuilderState<ID, T> extends State<DraggableBuilder<ID, T>> {
     else {
       dragValue = widget.valueProvider(item.dragIndex);
       itemBuilder = (_, __, ___) => LayoutBuilder(
-            builder: (context, constraints) => _buildDraggable(context, item, dragValue as T, constraints),
-          );
+        builder: (context, constraints) => _buildDraggable(context, item, dragValue as T, constraints),
+      );
     }
 
     return DragTarget<DragDetails<ID, T>>(
@@ -222,7 +222,7 @@ class _DraggableBuilderState<ID, T> extends State<DraggableBuilder<ID, T>> {
     return _controller!.computeItemCount(widget.identifier, widget.itemCount);
   }
 
-  void _onDragTargetMove(DragTargetDetails<DragDetails<ID, T>> details, int targetIndex) {
+  void _onDragTargetMove(DragTargetDetails<DragDetails<ID, T>> details, int? targetIndex) {
     _controller!.onDragTargetMove(details.data, widget.identifier, targetIndex, widget.itemCount, widget.valueProvider);
   }
 
