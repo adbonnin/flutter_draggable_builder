@@ -56,18 +56,28 @@ class DraggableController<ID, T> with ChangeNotifier {
     IndexedValueProvider targetValueProvider,
   ) {
     final isSameDrag = _data?.dragIdentifier == drag.dragIdentifier && //
-        _data?.dragIndex == drag.dragIndex &&
-        _data?.targetIdentifier == targetIdentifier;
+        _data?.dragIndex == drag.dragIndex;
 
     if (targetIndex == null) {
-      if (isSameDrag) {
+      if (isSameDrag && _data?.targetIdentifier == targetIdentifier) {
         return;
       }
 
-      targetIndex = targetCount ?? 0;
+      if (targetCount == null) {
+        targetIndex = 0;
+      } //
+      else if (drag.dragIdentifier == targetIdentifier) {
+        targetIndex = drag.dragIndex;
+      } //
+      else {
+        targetIndex = targetCount;
+      }
     }
 
-    if (isSameDrag && _data?.targetIndex == targetIndex) {
+    final isSameTarget = _data?.targetIndex == targetIndex && //
+        _data?.targetIdentifier == targetIdentifier;
+
+    if (isSameDrag && isSameTarget) {
       return;
     }
 

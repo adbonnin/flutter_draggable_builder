@@ -1,5 +1,7 @@
 ## 1.0.3
 
+* Fix: Resolve index out-of-range issue in wrapWithDragTarget
+
 ## 1.0.2
 
 * Fix: Resolve layout bug with wrapWithDragTarget
