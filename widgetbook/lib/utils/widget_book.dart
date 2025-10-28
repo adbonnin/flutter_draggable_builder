@@ -9,7 +9,7 @@ import 'package:widgetbook_workspace/widgets/item_box.dart';
 final rgbColors = [Colors.red, Colors.green, Colors.blue, Colors.white];
 final cmyColors = [Colors.cyan, Colors.pink, Colors.yellow, Colors.black];
 
-IndexedValueProvider<Item> buildDefaultValueProvider(List<Color> colors) {
+ItemProvider<Item> buildDefaultValueProvider(List<Color> colors) {
   return (index) {
     return Item(
       index: index,

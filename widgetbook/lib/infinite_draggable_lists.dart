@@ -28,8 +28,8 @@ class _InfiniteDraggableListsUseCaseState extends State<InfiniteDraggableListsUs
   static const leftIdentifier = 'left';
   static const rightIdentifier = 'right';
 
-  final leftItems = InfiniteIndexedValueProvider(buildDefaultValueProvider(rgbColors));
-  final rightItems = InfiniteIndexedValueProvider(buildDefaultValueProvider(cmyColors));
+  final leftItems = InfiniteIndexedItemProvider(buildDefaultValueProvider(rgbColors));
+  final rightItems = InfiniteIndexedItemProvider(buildDefaultValueProvider(cmyColors));
 
   @override
   void initState() {
@@ -104,7 +104,7 @@ class _InfiniteDraggableListsUseCaseState extends State<InfiniteDraggableListsUs
     final targetColors = data.targetIdentifier == leftIdentifier ? leftItems : rightItems;
 
     dragColors.removeAt(data.dragIndex);
-    targetColors.insertAt(data.targetIndex, data.dragValue);
+    targetColors.insertAt(data.targetIndex, data.dragItem);
 
     setState(() {});
   }

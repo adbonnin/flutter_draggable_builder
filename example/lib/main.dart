@@ -50,9 +50,9 @@ class _MyHomePageState extends State<MyHomePage> {
       body: DraggableBuilder<String, Color>(
         identifier: 'id',
         controller: _controller,
-        itemBuilder: (_, __, value) => ColoredBox(color: value),
+        itemBuilder: (_, value, ___) => ColoredBox(color: value),
         itemCount: _colors.length,
-        valueProvider: ((index) => _colors[index]),
+        itemProvider: ((index) => _colors[index]),
         builder: (_, itemBuilder, itemCount) => GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 4,
@@ -69,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onDragCompletion(DraggedDetails<String, Color> data) {
     final newColors = [..._colors] //
       ..removeAt(data.dragIndex)
-      ..insert(data.targetIndex, data.dragValue);
+      ..insert(data.targetIndex, data.dragItem);
 
     setState(() {
       _colors = newColors;

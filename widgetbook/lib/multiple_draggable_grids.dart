@@ -107,7 +107,7 @@ class _MultipleDraggableGridsUseCaseState extends State<MultipleDraggableGridsUs
     final targetColors = data.targetIdentifier == topIdentifier ? newTopColors : newBottomColors;
 
     dragColors.removeAt(data.dragIndex);
-    targetColors.insert(data.targetIndex, data.dragValue);
+    targetColors.insert(data.targetIndex, data.dragItem);
 
     setState(() {
       _topItems = newTopColors;

@@ -1,3 +1,7 @@
+## 2.0.0
+
+* Refactor: Refactor IndexedValueWidgetBuilder to ItemWidgetBuilder
+
 ## 1.0.3
 
 * Fix: Resolve index out-of-range issue in wrapWithDragTarget

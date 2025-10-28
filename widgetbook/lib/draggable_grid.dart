@@ -64,7 +64,7 @@ class _DraggableGridUseCaseState extends State<DraggableGridUseCase> {
   void _onDragCompletion(DraggedDetails<String, Item> data) {
     final newColors = [..._items] //
       ..removeAt(data.dragIndex)
-      ..insert(data.targetIndex, data.dragValue);
+      ..insert(data.targetIndex, data.dragItem);
 
     setState(() {
       _items = newColors;

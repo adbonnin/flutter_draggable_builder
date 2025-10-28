@@ -19,7 +19,7 @@ class DraggableController<ID, T> with ChangeNotifier {
     return _data?.computeItemCount(id, itemCount) ?? itemCount;
   }
 
-  TargetDetails<ID, T> computeItem(ID id, int index) {
+  TargetDetails<ID, T> computeDetails(ID id, int index) {
     final effectiveIndex = _data?.computeEffectiveIndex(id, index) ?? index;
 
     if (effectiveIndex < 0) {
@@ -53,7 +53,7 @@ class DraggableController<ID, T> with ChangeNotifier {
     ID targetIdentifier,
     int? targetIndex,
     int? targetCount,
-    IndexedValueProvider targetValueProvider,
+    ItemProvider targetItemProvider,
   ) {
     final isSameDrag = _data?.dragIdentifier == drag.dragIdentifier && //
         _data?.dragIndex == drag.dragIndex;
@@ -81,16 +81,16 @@ class DraggableController<ID, T> with ChangeNotifier {
       return;
     }
 
-    final targetValue = targetCount != null && targetIndex >= targetCount ? null : targetValueProvider(targetIndex);
+    final targetItem = targetCount != null && targetIndex >= targetCount ? null : targetItemProvider(targetIndex);
 
     final data = DraggedDetails<ID, T>(
       dragIdentifier: drag.dragIdentifier,
       dragIndex: drag.dragIndex,
-      dragValue: drag.dragValue,
+      dragItem: drag.dragItem,
       placeholderBuilder: drag.placeholderBuilder,
       targetIdentifier: targetIdentifier,
       targetIndex: targetIndex,
-      targetValue: targetValue,
+      targetItem: targetItem,
     );
 
     _data = data;

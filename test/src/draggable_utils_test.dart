@@ -5,10 +5,10 @@ void main() {
   int indexToValueBuilder(int index) => index;
 
   // given:
-  late InfiniteIndexedValueProvider<int> map;
+  late InfiniteIndexedItemProvider<int> map;
 
   setUp(() {
-    map = InfiniteIndexedValueProvider(indexToValueBuilder);
+    map = InfiniteIndexedItemProvider(indexToValueBuilder);
   });
 
   test("should return a value", () {

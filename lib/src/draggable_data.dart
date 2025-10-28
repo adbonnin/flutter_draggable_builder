@@ -1,6 +1,8 @@
 import 'package:draggable_builder/src/draggable_builder.dart';
 import 'package:flutter/widgets.dart';
 
+typedef ItemProvider<T> = T Function(int index);
+
 class TargetDetails<ID, T> {
   const TargetDetails({
     required this.dragIdentifier,
@@ -33,11 +35,11 @@ class DragDetails<ID, T> extends TargetDetails<ID, T> {
   const DragDetails({
     required super.dragIdentifier,
     required super.dragIndex,
-    required this.dragValue,
+    required this.dragItem,
     required this.placeholderBuilder,
   });
 
-  final T dragValue;
+  final T dragItem;
   final PlaceholderWidgetBuilder<ID, T> placeholderBuilder;
 
   @override
@@ -50,7 +52,7 @@ class DragDetails<ID, T> extends TargetDetails<ID, T> {
         runtimeType == other.runtimeType &&
         dragIdentifier == other.dragIdentifier &&
         dragIndex == other.dragIndex &&
-        dragValue == other.dragValue &&
+        dragItem == other.dragItem &&
         placeholderBuilder == other.placeholderBuilder;
   }
 
@@ -58,7 +60,7 @@ class DragDetails<ID, T> extends TargetDetails<ID, T> {
   int get hashCode {
     return dragIdentifier.hashCode ^ //
         dragIndex.hashCode ^
-        dragValue.hashCode ^
+        dragItem.hashCode ^
         placeholderBuilder.hashCode;
   }
 }
@@ -67,16 +69,16 @@ class DraggedDetails<ID, T> extends DragDetails<ID, T> {
   const DraggedDetails({
     required super.dragIdentifier,
     required super.dragIndex,
-    required super.dragValue,
+    required super.dragItem,
     required super.placeholderBuilder,
     required this.targetIdentifier,
     required this.targetIndex,
-    required this.targetValue,
+    required this.targetItem,
   });
 
   final ID targetIdentifier;
   final int targetIndex;
-  final T? targetValue;
+  final T? targetItem;
 
   Widget buildPlaceholder(BuildContext context) {
     return placeholderBuilder.call(context, this);
@@ -95,7 +97,7 @@ class DraggedDetails<ID, T> extends DragDetails<ID, T> {
         placeholderBuilder == other.placeholderBuilder &&
         targetIdentifier == other.targetIdentifier &&
         targetIndex == other.targetIndex &&
-        targetValue == other.targetValue;
+        targetItem == other.targetItem;
   }
 
   @override
@@ -105,6 +107,6 @@ class DraggedDetails<ID, T> extends DragDetails<ID, T> {
         placeholderBuilder.hashCode ^
         targetIdentifier.hashCode ^
         targetIndex.hashCode ^
-        targetValue.hashCode;
+        targetItem.hashCode;
   }
 }

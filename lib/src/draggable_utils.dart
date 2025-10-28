@@ -1,27 +1,21 @@
-import 'package:flutter/widgets.dart';
+import 'package:draggable_builder/src/draggable_data.dart';
 
-typedef IndexedValueProvider<T> = T Function(int index);
+class InfiniteIndexedItemProvider<T> extends Iterable<T> {
+  InfiniteIndexedItemProvider(this.defaultItemProvider);
 
-typedef IndexedValueWidgetBuilder<T> = Widget Function(BuildContext context, int index, T value);
-
-typedef NullableIndexedValueWidgetBuilder<T> = Widget? Function(BuildContext context, int index, T value);
-
-class InfiniteIndexedValueProvider<T> extends Iterable<T> {
-  InfiniteIndexedValueProvider(this.defaultValueProvider);
-
-  final IndexedValueProvider<T> defaultValueProvider;
+  final ItemProvider<T> defaultItemProvider;
   final List<_ValueChange<T>> _changes = [];
 
   @override
   Iterator<T> get iterator {
-    return _InfiniteIndexedValueIterator(this);
+    return _InfiniteIndexedItemIterator(this);
   }
 
   T call(int index) => this[index];
 
   T operator [](int index) {
     final changeAt = _changeAt(index);
-    return changeAt.value.valueOr(defaultValueProvider);
+    return changeAt.value.valueOr(defaultItemProvider);
   }
 
   void operator []=(int index, T newValue) {
@@ -37,7 +31,7 @@ class InfiniteIndexedValueProvider<T> extends Iterable<T> {
   T removeAt(int index) {
     final changeAt = _changeAt(index);
     changeAt.value.applyRemove(_changes, changeAt.key);
-    return changeAt.value.valueOr(defaultValueProvider);
+    return changeAt.value.valueOr(defaultItemProvider);
   }
 
   MapEntry<int, _ValueChange<T>> _changeAt(int index, {bool includeRemove = false}) {
@@ -76,8 +70,8 @@ abstract class _ValueChange<T> {
 
   final int index;
 
-  T valueOr(IndexedValueProvider<T> valueProvider) {
-    return valueProvider(index);
+  T valueOr(ItemProvider<T> itemProvider) {
+    return itemProvider(index);
   }
 
   void applySet(List<_ValueChange<T>> changes, int changeIndex, T newValue);
@@ -112,7 +106,7 @@ class _SetChange<T> extends _ValueChange<T> {
   final T value;
 
   @override
-  T valueOr(IndexedValueProvider<T> valueProvider) => value;
+  T valueOr(ItemProvider<T> valueProvider) => value;
 
   @override
   void applySet(List<_ValueChange<T>> changes, int changeIndex, T newValue) {
@@ -136,7 +130,7 @@ class _InsertChange<T> extends _ValueChange<T> {
   final T value;
 
   @override
-  T valueOr(IndexedValueProvider<T> valueProvider) => value;
+  T valueOr(ItemProvider<T> itemProvider) => value;
 
   @override
   void applySet(List<_ValueChange<T>> changes, int changeIndex, T newValue) {
@@ -158,7 +152,7 @@ class _RemoveChange<T> extends _ValueChange<T> {
   const _RemoveChange(super.index);
 
   @override
-  T valueOr(IndexedValueProvider<T> valueProvider) {
+  T valueOr(ItemProvider<T> itemProvider) {
     throw UnsupportedError('Cannot retrieve a value from a removed index (index: $index).');
   }
 
@@ -178,14 +172,14 @@ class _RemoveChange<T> extends _ValueChange<T> {
   }
 }
 
-class _InfiniteIndexedValueIterator<T> implements Iterator<T> {
-  _InfiniteIndexedValueIterator(this._valueProvider);
+class _InfiniteIndexedItemIterator<T> implements Iterator<T> {
+  _InfiniteIndexedItemIterator(this._itemProvider);
 
-  final InfiniteIndexedValueProvider<T> _valueProvider;
+  final InfiniteIndexedItemProvider<T> _itemProvider;
   int _currentIndex = -1;
 
   @override
-  T get current => _valueProvider[_currentIndex];
+  T get current => _itemProvider[_currentIndex];
 
   @override
   bool moveNext() {

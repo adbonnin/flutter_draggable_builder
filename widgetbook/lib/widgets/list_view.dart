@@ -32,7 +32,7 @@ class DraggableListView<ID, T> extends StatelessWidget {
   final Widget Function(BuildContext context, T value)? feedbackBuilder;
   final Widget Function(BuildContext context, T value)? placeholderBuilder;
   final Widget Function(BuildContext context)? emptyItemBuilder;
-  final IndexedValueProvider<T> valueProvider;
+  final ItemProvider<T> valueProvider;
   final int? itemCount;
 
   @override
@@ -45,13 +45,13 @@ class DraggableListView<ID, T> extends StatelessWidget {
       feedbackConstraintsSameAsItem: feedbackConstraintsSameAsItem,
       dragAnchorStrategy: dragAnchorStrategy,
       affinity: affinity,
-      itemBuilder: (c, i, v) => itemBuilder(c, v),
-      itemWhenDraggingBuilder: itemWhenDraggingBuilder == null ? null : (c, i, v) => itemWhenDraggingBuilder!(c, v),
-      feedbackBuilder: feedbackBuilder == null ? null : (c, i, v) => feedbackBuilder!(c, v),
-      placeholderBuilder: placeholderBuilder == null ? null : (c, d) => placeholderBuilder!(c, d.dragValue),
+      itemBuilder: (c, v, i) => itemBuilder(c, v),
+      itemWhenDraggingBuilder: itemWhenDraggingBuilder == null ? null : (c, v, i) => itemWhenDraggingBuilder!(c, v),
+      feedbackBuilder: feedbackBuilder == null ? null : (c, v, i) => feedbackBuilder!(c, v),
+      placeholderBuilder: placeholderBuilder == null ? null : (c, d) => placeholderBuilder!(c, d.dragItem),
       emptyItemBuilder: emptyItemBuilder,
       itemCount: itemCount,
-      valueProvider: valueProvider,
+      itemProvider: valueProvider,
       builder: (_, itemBuilder, itemCount) => MyListView(
         itemBuilder: itemBuilder,
         itemCount: itemCount,
