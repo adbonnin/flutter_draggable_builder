@@ -1,3 +1,7 @@
+## 2.0.1
+
+* Fix: Minor type safety improvements
+
 ## 2.0.0
 
 * Refactor: Refactor IndexedValueWidgetBuilder to ItemWidgetBuilder

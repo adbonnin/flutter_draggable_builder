@@ -1,6 +1,5 @@
 import 'package:draggable_builder/src/draggable_controller.dart';
 import 'package:draggable_builder/src/draggable_data.dart';
-import 'package:draggable_builder/src/draggable_utils.dart';
 import 'package:flutter/widgets.dart';
 
 typedef ItemWidgetBuilder<T> = Widget Function(
@@ -192,7 +191,7 @@ class _DraggableBuilderState<ID, T> extends State<DraggableBuilder<ID, T>> {
     );
 
     if (widget.isLongPress) {
-      effectiveChild = LongPressDraggable<DragDetails>(
+      effectiveChild = LongPressDraggable<DragDetails<ID, T>>(
         data: data,
         axis: widget.axis,
         feedbackOffset: widget.feedbackOffset,
@@ -204,7 +203,7 @@ class _DraggableBuilderState<ID, T> extends State<DraggableBuilder<ID, T>> {
       );
     } //
     else {
-      effectiveChild = Draggable<DragDetails>(
+      effectiveChild = Draggable<DragDetails<ID, T>>(
         data: data,
         axis: widget.axis,
         feedbackOffset: widget.feedbackOffset,

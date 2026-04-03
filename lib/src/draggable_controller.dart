@@ -1,5 +1,4 @@
 import 'package:draggable_builder/src/draggable_data.dart';
-import 'package:draggable_builder/src/draggable_utils.dart';
 import 'package:flutter/widgets.dart';
 
 typedef DragCompletionCallback<ID, T> = void Function(DraggedDetails<ID, T> dragged);
@@ -20,13 +19,14 @@ class DraggableController<ID, T> with ChangeNotifier {
   }
 
   TargetDetails<ID, T> computeDetails(ID id, int index) {
-    final effectiveIndex = _data?.computeEffectiveIndex(id, index) ?? index;
+    final data = _data;
+    final effectiveIndex = data?.computeEffectiveIndex(id, index) ?? index;
 
-    if (effectiveIndex < 0) {
-      return _data!;
+    if (data != null && effectiveIndex < 0) {
+      return data;
     }
 
-    final effectiveId = _data?.computeEffectiveId(id, index) ?? id;
+    final effectiveId = data?.computeEffectiveId(id, index) ?? id;
     return TargetDetails(dragIdentifier: effectiveId, dragIndex: effectiveIndex);
   }
 
