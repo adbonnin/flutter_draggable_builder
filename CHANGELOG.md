@@ -1,6 +1,7 @@
 ## 2.0.1
 
 * Fix: Minor type safety improvements
+* Feat: Add copyWith methods to models
 
 ## 2.0.0
 
